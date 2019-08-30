@@ -1,0 +1,17 @@
+Analyzing-text-with-amazon-elasticsearch-service-and-amazon-comprehend
+Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+**********************
+THIRD PARTY COMPONENTS
+**********************
+This software includes third party software subject to the following copyrights:
+
+elasticsearch-rest-client under the Apache License, Version 2.0
+aws-request-signing-apache-interceptor under the Apache License, Version 2.0
+guice under the Apache License, Version 2.0
+guava under the Apache License, Version 2.0
+powermock under the Apache License, Version 2.0
+lombok under MIT License
+mockito under MIT License
+org.json under JSON License
+junit under Eclipse Public License 1.0
