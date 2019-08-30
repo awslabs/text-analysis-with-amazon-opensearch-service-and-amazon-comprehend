@@ -1,0 +1,16 @@
+build
+.python-version
+.idea/
+*.
+*.pyc
+test/__pycache__*
+doc/generated*
+target
+runpy
+test-runtime
+!.coveragerc
+!.gitignore
+*.iml
+deployment/dist/
+deployment/open-source/
+source/target/
