@@ -1,7 +1,7 @@
 # Analyzing Text with Amazon Elasticsearch Service and Amazon Comprehend
 The package contains the cloudFormation template and implementation source code for AWS solution - analyzing text with Amazon Elasticsearch Service and Amazon Comprehend
 
-For more detail about deploying solution, please refer to solution [deployment guide page](https://docs.aws.amazon.com/solutions/latest/analyzing-text-with-amazon-elasticsearch-service-and-amazon-comprehend/welcome.html)
+For more detail about deploying solution, please refer to solution [deployment guide page](https://aws.amazon.com/solutions/analyzing-text-with-amazon-elasticsearch-service-and-amazon-comprehend/)
 
 ## File Structure
 ```
