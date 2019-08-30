@@ -1,0 +1,729 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+    "(SO0060) - Analyzing-text-with-amazon-elasticsearch-service-and-amazon-comprehend:
+    - Example solution template. Template Version 1"
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "Basic Configuration"
+        Parameters:
+          - DomainName
+          - InstanceType
+          - InstanceCount
+          - EnableVPC
+          - IPToAccessKibanaDashboard
+          - APIGatewayAuthorizationType
+      -
+        Label:
+          default: "Elasticsearch VPC"
+        Parameters:
+          - VpcCidrBlock
+          - PublicSubnet01Block
+          - PublicSubnet02Block
+          - PrivateSubnet01Block
+          - PrivateSubnet02Block
+      -
+        Label:
+          default: "Elasticsearch Encryption"
+        Parameters:
+          - EnableEncryptionAtRest
+          - EnableNodeToNodeEncryption
+      -
+        Label:
+          default: "Elasticsearch EBS"
+        Parameters:
+          - ElasticsearchEnableEBS
+          - EBSVolumeType
+          - EBSVolumeSizeInGB
+      -
+        Label:
+          default: "Elasticsearch ClusterConfig"
+        Parameters:
+          - EnableDedicatedMaster
+          - DedicatedMasterCount
+          - DedicatedMasterType
+          - EnableZoneAwareness
+      - Label:
+          default: "Optional"
+        Parameters:
+          - Stage
+          - ESServiceRoleExists
+
+Mappings:
+  Send:
+    AnonymousUsage:
+      Data: "Yes"
+  Function:
+    ComprehendESLambdaFunction:
+      S3Bucket: %%BUCKET_NAME%%
+      S3Key: analyzing-text-with-amazon-elasticsearch-service-and-amazon-comprehend/%%VERSION%%/analyzing-text-with-amazon-elasticsearch-service-and-amazon-comprehend.jar
+
+Parameters:
+  DomainName:
+    Description: Domain name for Elasticsearch service
+    Type: String
+    AllowedPattern: "^[a-z0-9-]*$"
+    MaxLength: 28
+    ConstraintDescription: "The name must start with a lowercase letter and must be between 3 and 28 characters.
+        Valid characters are a-z (lowercase only), 0-9, and - (hyphen). Must have length less than or equal to 28"
+  InstanceType:
+    Description: "Instance type for Amazon Elasticsearch domain. https://aws.amazon.com/elasticsearch-service/pricing/"
+    Type: String
+    AllowedPattern: "^[a-z0-9]{2}\\.[a-z0-9]+\\.elasticsearch$"
+    Default: 'm4.large.elasticsearch'
+  InstanceCount:
+    Description: The number of instances for the Elasticsearch domain.
+    Type: Number
+    Default: 2
+    MinValue: 2
+  EnableVPC:
+    Description: Enable or disable VPC for lambda & Elasticsearch
+    Type: String
+    Default: 'false'
+    AllowedValues: ['true', 'false']
+  IPToAccessKibanaDashboard:
+    Description: The ip address or cidr you want to grant access to Elasticsearch domain. Note this won't be used if you enabled VPC.
+    Type: String
+    Default: 10.0.0.0/16
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))?$"
+  APIGatewayAuthorizationType:
+    Description: Select the way for API Gateway Authorization
+    Type: String
+    Default: 'NONE'
+    AllowedValues: ['NONE', 'AWS_IAM']
+  # Elasticsearch VPC
+  VpcCidrBlock:
+    Description: CidrBlock for VPC
+    Type: String
+    Default: 10.0.0.0/16
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$"
+  PublicSubnet01Block:
+    Description: CidrBlock for public subnet 1
+    Type: String
+    Default: 10.0.0.0/24
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$"
+  PublicSubnet02Block:
+    Description: CidrBlock for public subnet 2
+    Type: String
+    Default: 10.0.1.0/24
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$"
+  PrivateSubnet01Block:
+    Description: CidrBlock for private subnet 1
+    Type: String
+    Default: 10.0.2.0/24
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$"
+  PrivateSubnet02Block:
+    Description: CidrBlock for private subnet 2
+    Type: String
+    Default: 10.0.3.0/24
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$"
+  # Elasticsearch Encryption
+  EnableEncryptionAtRest:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+  EnableNodeToNodeEncryption:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+  # Elasticsearch EBS
+  ElasticsearchEnableEBS:
+    Description: Enable or disable EBS storage type for Elasticsearch
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+  EBSVolumeType:
+    Description: Elasticsearch EBS volume type
+    Type: String
+    Default: 'standard'
+    AllowedValues: ['standard', 'gp2', 'io1', 'st1', 'sc1']
+  EBSVolumeSizeInGB:
+    Description: Elasticsearch EBS storage size per node.
+    Type: Number
+    Default: 10
+    MaxValue: 3584
+    MinValue: 10
+    ConstraintDescription: "Volume size must be an integer between 10 and 3584."
+  # Elasticsearch ClusterConfig
+  EnableDedicatedMaster:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+  DedicatedMasterCount:
+    Type: Number
+    Default: 3
+  DedicatedMasterType:
+    Type: String
+    AllowedPattern: "^[a-z0-9]{2}\\.[a-z0-9]+\\.elasticsearch$"
+    Default: 'm4.large.elasticsearch'
+  EnableZoneAwareness:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+  # Optional
+  Stage:
+    Description: The stage name of API Gateway
+    Type: String
+    Default: 'prod'
+    AllowedPattern: "^[a-zA-Z0-9_]*$"
+    ConstraintDescription: "The name must contain only a-zA-Z0-9_"
+  ESServiceRoleExists:
+    Description: Choose whether ServiceLinkedRole for Elasticsearch VPC access already exists"
+    Type: String
+    Default: 'false'
+    AllowedValues: ['true', 'false']
+
+Conditions:
+  IsVPCEnabled:
+    Fn::Equals:
+      - Ref: EnableVPC
+      - 'true'
+  IsEBSEnabled:
+    Fn::Equals:
+      - Ref: ElasticsearchEnableEBS
+      - 'true'
+  ServiceRoleNotExists:
+    Fn::Equals:
+      - Ref: ESServiceRoleExists
+      - 'false'
+
+Outputs:
+  ExampleProxyAccessRoleArn:
+    Description: 'IAM Role to invoke APIGateway'
+    Value:
+      Fn::GetAtt: ComprehendESAPIGatewayIAMRole.Arn
+  ProxyAccessPolicyArn:
+    Description: 'IAM managed policy to access proxy API'
+    Value:
+        Ref: ComprehendESAPIGatewayAccessPolicy
+  ProxyEndpoint:
+    Description: 'URL of Elasticsearch domain proxy endpoint'
+    Value:
+      Fn::Sub: "https://${ComprehendESProxyAPI}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/"
+  ElasticsearchEndpoint:
+    Description: 'Elasticsearch endpoint'
+    Value:
+      Fn::Join:
+        - ''
+        - - 'https://'
+          - Fn::GetAtt: 'ComprehendESDomain.DomainEndpoint'
+  KibanaDashboardURL:
+    Description: 'URL to access Kibana dashboard'
+    Value:
+      Fn::Join:
+        - ''
+        - - 'https://'
+          - Fn::GetAtt: 'ComprehendESDomain.DomainEndpoint'
+          - '/_plugin/kibana'
+
+Resources:
+  ComprehendESProxyAPI:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: "ComprehendESProxyAPI"
+      Description: 'Comprehend Elasticsearch Proxy rest API'
+      Parameters:
+        endpointConfigurationTypes: REGIONAL
+      Body:
+        swagger: "2.0"
+        info:
+          version: "1.0"
+          title: "Proxy Integration With Lambda"
+        basePath: "/prod"
+        schemes:
+          - "https"
+
+  # API Gateway Resource, Validator & Method
+  ComprehendESProxyAPIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt ComprehendESProxyAPI.RootResourceId
+      RestApiId: !Ref ComprehendESProxyAPI
+      PathPart: '{proxy+}'
+  ComprehendESProxyAPIRequestValidator:
+    Type: 'AWS::ApiGateway::RequestValidator'
+    Properties:
+      RestApiId: !Ref ComprehendESProxyAPI
+      ValidateRequestBody: true
+      ValidateRequestParameters: true
+  ComprehendESProxyAPIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: !Ref APIGatewayAuthorizationType
+      HttpMethod: ANY
+      ResourceId: !Ref ComprehendESProxyAPIResource
+      RestApiId: !Ref ComprehendESProxyAPI
+      RequestParameters:
+        method.request.path.proxy: true
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        PassthroughBehavior: WHEN_NO_MATCH
+        IntegrationResponses:
+          - StatusCode: 200
+        Credentials:
+          Fn::GetAtt: [ComprehendESAPIGatewayExecutionRole, Arn]
+        Uri:
+          Fn::Sub: "arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${ComprehendESLambda}/invocations"
+
+  # Deployment & Stages
+  ComprehendESProxyAPIDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ComprehendESProxyAPIMethod
+    Properties:
+      RestApiId:
+        Ref: ComprehendESProxyAPI
+      Description: 'Comprehend Elasticsearch Proxy API deployment'
+  ComprehendESProxyAPIProdStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId:
+        Ref: ComprehendESProxyAPIDeployment
+      RestApiId:
+        Ref: ComprehendESProxyAPI
+      StageName: {Ref: Stage}
+
+  # IAM policy for customer to access API Gateway
+  ComprehendESAPIGatewayAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W13
+            reason: "Policy to access any sub-resources under proxy API is allowed"
+    Properties:
+      Description: IAM policy to access API Gateway
+      PolicyDocument:
+        Statement:
+          - Action: ["execute-api:Invoke","execute-api:ManageConnections"]
+            Effect: Allow
+            Resource:
+              - Fn::Sub: 'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${ComprehendESProxyAPI}/*'
+        Version: '2012-10-17'
+  # IAM role for customer to access API Gateway
+  ComprehendESAPIGatewayIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: ['sts:AssumeRole']
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Sub: 'arn:${AWS::Partition}:iam::${AWS::AccountId}:root'
+        Version: '2012-10-17'
+      ManagedPolicyArns:
+        - Ref: ComprehendESAPIGatewayAccessPolicy
+  # Role for API Gateway to access lambda
+  ComprehendESAPIGatewayExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: ['sts:AssumeRole']
+            Effect: Allow
+            Principal:
+              Service: [apigateway.amazonaws.com]
+        Version: '2012-10-17'
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action: ['lambda:InvokeFunction']
+                Effect: Allow
+                Resource:
+                  - Fn::Sub: 'arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${ComprehendESLambda}'
+            Version: '2012-10-17'
+          PolicyName: apigInvokeLambda
+
+
+  # Elasticsearch Domain
+  ComprehendESDomain:
+    Type: AWS::Elasticsearch::Domain
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "Name is needed to construct the domain policy, which refers to the domain arn"
+    Properties:
+      DomainName: {Ref: DomainName}
+      ElasticsearchVersion: '6.7'
+      EncryptionAtRestOptions:
+        Enabled: {Ref: EnableEncryptionAtRest}
+      NodeToNodeEncryptionOptions:
+        Enabled: {Ref: EnableNodeToNodeEncryption}
+      ElasticsearchClusterConfig:
+        InstanceCount: {Ref: InstanceCount}
+        InstanceType: {Ref: InstanceType}
+        DedicatedMasterCount: {Ref: DedicatedMasterCount}
+        DedicatedMasterEnabled: {Ref: EnableDedicatedMaster}
+        DedicatedMasterType: {Ref: DedicatedMasterType}
+        ZoneAwarenessEnabled: {Ref: EnableZoneAwareness}
+      EBSOptions:
+        EBSEnabled:
+          Ref: ElasticsearchEnableEBS
+        VolumeType:
+          Fn::If:
+            - IsEBSEnabled
+            - Ref: EBSVolumeType
+            - Ref: AWS::NoValue
+        VolumeSize:
+          Fn::If:
+            - IsEBSEnabled
+            - Ref: EBSVolumeSizeInGB
+            - Ref: AWS::NoValue
+      SnapshotOptions:
+        AutomatedSnapshotStartHour: 0
+      AccessPolicies:
+        Fn::If:
+          - IsVPCEnabled
+          - Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Principal:
+                  AWS:
+                    - Fn::Sub: 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${ComprehendESLambdaRole}'
+                Action: 'es:*'
+                Resource:
+                  Fn::Sub: 'arn:${AWS::Partition}:es:${AWS::Region}:${AWS::AccountId}:domain/${DomainName}/*'
+          - Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Principal:
+                  AWS:
+                    Fn::Sub: 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${ComprehendESLambdaRole}'
+                Action: 'es:*'
+                Resource:
+                  Fn::Sub: 'arn:${AWS::Partition}:es:${AWS::Region}:${AWS::AccountId}:domain/${DomainName}/*'
+              - Sid: ""
+                Effect: Allow
+                Principal:
+                  AWS: '*'
+                Action: 'es:*'
+                Resource:
+                  Fn::Sub: 'arn:${AWS::Partition}:es:${AWS::Region}:${AWS::AccountId}:domain/${DomainName}/*'
+                Condition:
+                  IpAddress:
+                    aws:SourceIp: {Ref: IPToAccessKibanaDashboard}
+      AdvancedOptions:
+        rest.action.multi.allow_explicit_index: 'true'
+      VPCOptions:
+        Fn::If:
+          - IsVPCEnabled
+          - SecurityGroupIds:
+              - Ref: ComprehendESSecurityGroup
+            SubnetIds:
+              - Ref: ComprehendESPublicSubnet01
+              - Ref: ComprehendESPublicSubnet02
+          - Ref: AWS::NoValue
+  ElasticsearchServiceLinkedRole:
+    Type: AWS::IAM::ServiceLinkedRole
+    Condition: ServiceRoleNotExists
+    Properties:
+      AWSServiceName: "es.amazonaws.com"
+      Description: "Enable a service-linked role to give Amazon ES permissions to access VPC"
+
+  ComprehendESLambda:
+    Properties:
+      Code:
+        S3Bucket: !Join ['-', [!FindInMap [ Function, ComprehendESLambdaFunction, S3Bucket], !Ref 'AWS::Region']]
+        S3Key: !FindInMap [ Function, ComprehendESLambdaFunction, S3Key]
+      Handler: 'com.amazonaws.comprehend.esproxy.lambda.ElasticsearchProxyRequestHandler::handleRequest'
+      Environment:
+        Variables:
+          ElasticsearchDomainEndpoint:
+            Fn::GetAtt: 'ComprehendESDomain.DomainEndpoint'
+          Region:
+            Ref: 'AWS::Region'
+      MemorySize: 512
+      Role:
+        Fn::GetAtt: [ComprehendESLambdaRole, Arn]
+      Runtime: java8
+      Timeout: 300
+      VpcConfig:
+        Fn::If:
+          - IsVPCEnabled
+          - SecurityGroupIds: [{Ref: ProxyServiceSecurityGroup}]
+            SubnetIds:
+              - Ref: ComprehendESPrivateSubnet01
+              - Ref: ComprehendESPrivateSubnet02
+          - Ref: 'AWS::NoValue'
+    Type: AWS::Lambda::Function
+  ComprehendESLambdaRole:
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W11
+            reason: "Amazon Comprehend Detect and BatchDetect APIs dont have associated resources. "
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: ['sts:AssumeRole']
+            Effect: Allow
+            Principal:
+              Service: [lambda.amazonaws.com]
+        Version: '2012-10-17'
+      ManagedPolicyArns:
+        - Fn::Sub: 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole'
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action: ['comprehend:DetectDominantLanguage',
+                         'comprehend:DetectEntities',
+                         'comprehend:DetectKeyPhrases',
+                         'comprehend:DetectSentiment',
+                         'comprehend:DetectSyntax',
+                         'comprehend:BatchDetectDominantLanguage',
+                         'comprehend:BatchDetectEntities',
+                         'comprehend:BatchDetectKeyPhrases',
+                         'comprehend:BatchDetectSentiment',
+                         'comprehend:BatchDetectSyntax']
+                Effect: Allow
+                Resource: '*'
+            Version: '2012-10-17'
+          PolicyName: ComprehendESLambdaRolePolicy
+    Type: AWS::IAM::Role
+  ComprehendESLambdaLogGroup:
+    DependsOn: ComprehendESLambda
+    Properties:
+      LogGroupName: {"Fn::Sub": "/aws/lambda/${ComprehendESLambda}"}
+    Type: AWS::Logs::LogGroup
+
+
+  # VPC
+  ComprehendESVPC:
+    Condition: IsVPCEnabled
+    Properties:
+      CidrBlock: {Ref: VpcCidrBlock}
+      Tags:
+        - Key: Name
+          Value: 'ComprehendESVPC'
+    Type: AWS::EC2::VPC
+  # Subnet
+  ComprehendESPublicSubnet01:
+    Condition: IsVPCEnabled
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+          - '0'
+          - Fn::GetAZs: {Ref: 'AWS::Region'}
+      CidrBlock: {Ref: PublicSubnet01Block}
+      Tags:
+        - Key: Name
+          Value: 'ComprehendESPublicSubnet01'
+      VpcId: {Ref: ComprehendESVPC}
+    Type: AWS::EC2::Subnet
+  ComprehendESPublicSubnet02:
+    Condition: IsVPCEnabled
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+          - '1'
+          - Fn::GetAZs: {Ref: 'AWS::Region'}
+      CidrBlock: {Ref: PublicSubnet02Block}
+      Tags:
+        - Key: Name
+          Value: 'ComprehendESPublicSubnet02'
+      VpcId: {Ref: ComprehendESVPC}
+    Type: AWS::EC2::Subnet
+  ComprehendESPrivateSubnet01:
+    Condition: IsVPCEnabled
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+          - '0'
+          - Fn::GetAZs: {Ref: 'AWS::Region'}
+      CidrBlock: {Ref: PrivateSubnet01Block}
+      Tags:
+        - Key: Name
+          Value: 'ComprehendESPrivateSubnet01'
+      VpcId: {Ref: ComprehendESVPC}
+    Type: AWS::EC2::Subnet
+  ComprehendESPrivateSubnet02:
+    Condition: IsVPCEnabled
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+          - '1'
+          - Fn::GetAZs: {Ref: 'AWS::Region'}
+      CidrBlock: {Ref: PrivateSubnet02Block}
+      Tags:
+        - Key: Name
+          Value: 'ComprehendESPrivateSubnet02'
+      VpcId: {Ref: ComprehendESVPC}
+    Type: AWS::EC2::Subnet
+  # Elastic IP
+  ComprehendESEIP01:
+    Condition: IsVPCEnabled
+    Properties:
+      Domain: vpc
+    Type: AWS::EC2::EIP
+  ComprehendESEIP02:
+    Condition: IsVPCEnabled
+    Properties:
+      Domain: vpc
+    Type: AWS::EC2::EIP
+  # Gateway
+  ComprehendESInternetGateway:
+    Condition: IsVPCEnabled
+    Properties:
+      Tags:
+        - Key: Name
+          Value: 'ComprehendESInternetGateway'
+    Type: 'AWS::EC2::InternetGateway'
+  ComprehendESGatewayAttachement:
+    Condition: IsVPCEnabled
+    Properties:
+      InternetGatewayId: {Ref: ComprehendESInternetGateway}
+      VpcId: {Ref: ComprehendESVPC}
+    Type: AWS::EC2::VPCGatewayAttachment
+  ComprehendESNATFromPublicSubnet01:
+    Condition: IsVPCEnabled
+    DependsOn: ComprehendESGatewayAttachement
+    Properties:
+      AllocationId:
+        Fn::GetAtt: [ComprehendESEIP01, AllocationId]
+      SubnetId: {Ref: ComprehendESPublicSubnet01}
+      Tags:
+        - Key: Name
+          Value: 'ComprehendESNATFromPublicSubnet01'
+    Type: AWS::EC2::NatGateway
+  ComprehendESNATFromPublicSubnet02:
+    Condition: IsVPCEnabled
+    DependsOn: ComprehendESGatewayAttachement
+    Properties:
+      AllocationId:
+        Fn::GetAtt: [ComprehendESEIP02, AllocationId]
+      SubnetId: {Ref: ComprehendESPublicSubnet02}
+      Tags:
+        - Key: Name
+          Value: 'ComprehendESNATFromPublicSubnet02'
+    Type: AWS::EC2::NatGateway
+  # RouteTable
+  ComprehendESPublicRouteTable:
+    Condition: IsVPCEnabled
+    Properties:
+      Tags:
+        - Key: Name
+          Value: 'ComprehendESPublicRouteTable'
+      VpcId: {Ref: ComprehendESVPC}
+    Type: AWS::EC2::RouteTable
+  ComprehendESPrivateRouteTable01:
+    Condition: IsVPCEnabled
+    Properties:
+      Tags:
+        - Key: Name
+          Value: 'ComprehendESPrivateRouteTable01'
+      VpcId: {Ref: ComprehendESVPC}
+    Type: AWS::EC2::RouteTable
+  ComprehendESPrivateRouteTable02:
+    Condition: IsVPCEnabled
+    Properties:
+      Tags:
+        - Key: Name
+          Value: 'ComprehendESPrivateRouteTable02'
+      VpcId: {Ref: ComprehendESVPC}
+    Type: AWS::EC2::RouteTable
+  # Route
+  ComprehendESPublicRouteTableIGWRoute:
+    Condition: IsVPCEnabled
+    DependsOn: ComprehendESGatewayAttachement
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: {Ref: ComprehendESInternetGateway}
+      RouteTableId: {Ref: ComprehendESPublicRouteTable}
+    Type: AWS::EC2::Route
+  ComprehendESPrivateNATInternetRoute01:
+    Condition: IsVPCEnabled
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: {Ref: ComprehendESNATFromPublicSubnet01}
+      RouteTableId: {Ref: ComprehendESPrivateRouteTable01}
+    Type: AWS::EC2::Route
+  ComprehendESPrivateNATInternetRoute02:
+    Condition: IsVPCEnabled
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: {Ref: ComprehendESNATFromPublicSubnet02}
+      RouteTableId: {Ref: ComprehendESPrivateRouteTable02}
+    Type: AWS::EC2::Route
+  # RouteTable Association
+  ComprehendESPublicSubnetRouteTableAssociation01:
+    Condition: IsVPCEnabled
+    Metadata: {Comment: Associate subnet to Public route}
+    Properties:
+      RouteTableId: {Ref: ComprehendESPublicRouteTable}
+      SubnetId: {Ref: ComprehendESPublicSubnet01}
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  ComprehendESPublicSubnetRouteTableAssociation02:
+    Condition: IsVPCEnabled
+    Metadata: {Comment: Associate subnet to Public route}
+    Properties:
+      RouteTableId: {Ref: ComprehendESPublicRouteTable}
+      SubnetId: {Ref: ComprehendESPublicSubnet02}
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  ComprehendESPrivateSubnetRouteTableAssociation01:
+    Condition: IsVPCEnabled
+    Metadata: {Comment: Associate subnet to private route}
+    Properties:
+      RouteTableId: {Ref: ComprehendESPrivateRouteTable01}
+      SubnetId: {Ref: ComprehendESPrivateSubnet01}
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  ComprehendESPrivateSubnetRouteTableAssociation02:
+    Condition: IsVPCEnabled
+    Metadata: {Comment: Associate subnet to private route}
+    Properties:
+      RouteTableId: {Ref: ComprehendESPrivateRouteTable02}
+      SubnetId: {Ref: ComprehendESPrivateSubnet02}
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  # Security Group
+  ComprehendESSecurityGroup:
+    Condition: IsVPCEnabled
+    Properties:
+      GroupDescription: Allow HTTPs inbound traffic and all outbound access
+      Tags:
+        - Key: Name
+          Value: 'ComprehendESSecurityGroup'
+      VpcId: {Ref: ComprehendESVPC}
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          Description: "ingress traffic on port 443 from vpc cidr blocker"
+          CidrIp: {Ref: VpcCidrBlock}
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          Description: "egress traffic on port 443 from vpc cidr blocker"
+          CidrIp: {Ref: VpcCidrBlock}
+    Type: AWS::EC2::SecurityGroup
+  ProxyServiceSecurityGroup:
+    Condition: IsVPCEnabled
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W5
+            reason: "this is security group for lambda function to access Amazon Comprehend. Egress to internet should be permitted."
+    Properties:
+      GroupDescription: Allow HTTPs inbound traffic and all outbound access
+      Tags:
+        - Key: Name
+          Value: 'ProxyServiceSecurityGroup'
+      VpcId: {Ref: ComprehendESVPC}
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          Description: "ingress traffic on port 443 from vpc cidr blocker"
+          CidrIp: {Ref: VpcCidrBlock}
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          Description: "egress traffic on port 443 to internet to access Amazon Comprehend"
+          CidrIp: 0.0.0.0/0
+    Type: AWS::EC2::SecurityGroup

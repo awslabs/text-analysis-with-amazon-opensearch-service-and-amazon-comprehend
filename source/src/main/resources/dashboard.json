@@ -1,0 +1,238 @@
+{
+  "dashboard": [
+    {
+      "panelIndex": "1",
+      "id": "comprehend_markdown-entity-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 48,
+        "x": 0,
+        "h": 9,
+        "y": 0,
+        "i": "1"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "2",
+      "id": "INDEX_NAME_FIELD_NAME-entity-commercial-item-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 0,
+        "h": 18,
+        "y": 9,
+        "i": "2"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "3",
+      "id": "INDEX_NAME_FIELD_NAME-entity-organization-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 24,
+        "h": 18,
+        "y": 9,
+        "i": "3"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "4",
+      "id": "INDEX_NAME_FIELD_NAME-entity-person-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 0,
+        "h": 18,
+        "y": 27,
+        "i": "4"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "5",
+      "id": "INDEX_NAME_FIELD_NAME-entity-location-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 24,
+        "h": 18,
+        "y": 27,
+        "i": "5"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "6",
+      "id": "INDEX_NAME_FIELD_NAME-entity-event-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 0,
+        "h": 18,
+        "y": 45,
+        "i": "6"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "7",
+      "id": "INDEX_NAME_FIELD_NAME-entity-title-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 24,
+        "h": 18,
+        "y": 45,
+        "i": "7"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "8",
+      "id": "comprehend_markdown-sentiment-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 48,
+        "x": 0,
+        "h": 9,
+        "y": 63,
+        "i": "8"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "9",
+      "id": "INDEX_NAME_FIELD_NAME-sentiment-time-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 0,
+        "h": 18,
+        "y": 72,
+        "i": "9"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "10",
+      "id": "INDEX_NAME_FIELD_NAME-sentiment-type-count-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 24,
+        "h": 18,
+        "y": 72,
+        "i": "10"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "11",
+      "id": "INDEX_NAME_FIELD_NAME-sentiment-pos-table-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 0,
+        "h": 18,
+        "y": 90,
+        "i": "11"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "12",
+      "id": "INDEX_NAME_FIELD_NAME-sentiment-neg-table-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 24,
+        "h": 18,
+        "y": 90,
+        "i": "12"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "13",
+      "id": "comprehend_markdown-keyphrase-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 48,
+        "x": 0,
+        "h": 9,
+        "y": 108,
+        "i": "13"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "14",
+      "id": "INDEX_NAME_FIELD_NAME-keyphrase-cloud-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 0,
+        "h": 18,
+        "y": 117,
+        "i": "14"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "15",
+      "id": "INDEX_NAME_FIELD_NAME-keyphrase-heat-map-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 24,
+        "h": 18,
+        "y": 117,
+        "i": "15"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "16",
+      "id": "comprehend_markdown-syntax-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 48,
+        "x": 0,
+        "h": 9,
+        "y": 135,
+        "i": "16"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "17",
+      "id": "INDEX_NAME_FIELD_NAME-syntax-verb-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 0,
+        "h": 18,
+        "y": 144,
+        "i": "17"
+      },
+      "version": "6.5.4"
+    },
+    {
+      "panelIndex": "18",
+      "id": "INDEX_NAME_FIELD_NAME-syntax-noun-visualization-id",
+      "type": "visualization",
+      "gridData": {
+        "w": 24,
+        "x": 24,
+        "h": 18,
+        "y": 144,
+        "i": "18"
+      },
+      "version": "6.5.4"
+    }
+  ]
+}

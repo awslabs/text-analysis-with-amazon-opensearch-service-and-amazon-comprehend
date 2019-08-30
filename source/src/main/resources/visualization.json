@@ -1,0 +1,310 @@
+{
+  "entity-commercial-item": {
+    "title": "INDEX_NAME_FIELD_NAME-entity-commercial-item",
+    "type": "tagcloud",
+    "aggs": [
+      {
+        "schema": "metric",
+        "type": "count"
+      },
+      {
+        "schema": "segment",
+        "type": "terms",
+        "params": {
+          "field": "FIELD_NAME_DetectEntities_Kibana.COMMERCIAL_ITEM.text.keyword",
+          "size": 25
+        }
+      }
+    ]
+  },
+  "entity-event": {
+    "title": "INDEX_NAME_FIELD_NAME-entity-event",
+    "type": "tagcloud",
+    "aggs": [
+      {
+        "schema": "metric",
+        "type": "count"
+      },
+      {
+        "schema": "segment",
+        "type": "terms",
+        "params": {
+          "field": "FIELD_NAME_DetectEntities_Kibana.EVENT.text.keyword",
+          "size": 25
+        }
+      }
+    ]
+  },
+  "entity-location": {
+    "title": "INDEX_NAME_FIELD_NAME-entity-location",
+    "type": "tagcloud",
+    "aggs": [
+      {
+        "schema": "metric",
+        "type": "count"
+      },
+      {
+        "schema": "segment",
+        "type": "terms",
+        "params": {
+          "field": "FIELD_NAME_DetectEntities_Kibana.LOCATION.text.keyword",
+          "size": 25
+        }
+      }
+    ]
+  },
+  "entity-organization": {
+    "title": "INDEX_NAME_FIELD_NAME-entity-organization",
+    "type": "tagcloud",
+    "aggs": [
+      {
+        "schema": "metric",
+        "type": "count"
+      },
+      {
+        "schema": "segment",
+        "type": "terms",
+        "params": {
+          "field": "FIELD_NAME_DetectEntities_Kibana.ORGANIZATION.text.keyword",
+          "size": 25
+        }
+      }
+    ]
+  },
+  "entity-person": {
+    "title": "INDEX_NAME_FIELD_NAME-entity-person",
+    "type": "tagcloud",
+    "aggs": [
+      {
+        "schema": "metric",
+        "type": "count"
+      },
+      {
+        "schema": "segment",
+        "type": "terms",
+        "params": {
+          "field": "FIELD_NAME_DetectEntities_Kibana.PERSON.text.keyword",
+          "size": 25
+        }
+      }
+    ]
+  },
+  "entity-title": {
+    "title": "INDEX_NAME_FIELD_NAME-entity-title",
+    "type": "tagcloud",
+    "aggs": [
+      {
+        "schema": "metric",
+        "type": "count"
+      },
+      {
+        "schema": "segment",
+        "type": "terms",
+        "params": {
+          "field": "FIELD_NAME_DetectEntities_Kibana.TITLE.text.keyword",
+          "size": 25
+        }
+      }
+    ]
+  },
+  "keyphrase-cloud": {
+    "title": "INDEX_NAME_FIELD_NAME-keyphrase-cloud",
+    "type": "tagcloud",
+    "aggs": [
+      {
+        "schema": "metric",
+        "type": "count"
+      },
+      {
+        "schema": "segment",
+        "type": "terms",
+        "params": {
+          "field": "FIELD_NAME_DetectKeyPhrases_Kibana.keyPhrases.text.keyword",
+          "size": 25
+        }
+      }
+    ]
+  },
+  "keyphrase-heat-map": {
+    "title": "INDEX_NAME_FIELD_NAME-keyphrase-heat-map",
+    "type": "heatmap",
+    "aggs": [
+      {
+        "schema": "metric",
+        "id": "1",
+        "type": "count"
+      },
+      {
+        "schema": "segment",
+        "id": "2",
+        "type": "date_histogram",
+        "params": {
+          "field": "process_time",
+          "interval": "m",
+          "timeRange": {
+            "mode": "quick",
+            "from": "now-30m",
+            "to": "now"
+          }
+        }
+      },
+      {
+        "schema": "group",
+        "id": "3",
+        "type": "significant_terms",
+        "params": {
+          "field": "FIELD_NAME_DetectKeyPhrases_Kibana.keyPhrases.text.keyword",
+          "size": 5
+        }
+      }
+    ]
+  },
+  "sentiment-neg-table": {
+    "params": {
+      "perPage": 10
+    },
+    "title": "INDEX_NAME_FIELD_NAME-sentiment-neg-table",
+    "type": "table",
+    "aggs": [
+      {
+        "schema": "metric",
+        "id": "1",
+        "type": "avg",
+        "params": {
+          "field": "FIELD_NAME_DetectSentiment.sentimentScore.negative"
+        },
+        "enabled": true
+      },
+      {
+        "schema": "bucket",
+        "id": "2",
+        "type": "terms",
+        "params": {
+          "field": "FIELD_NAME.keyword",
+          "size": 10,
+          "orderBy": "1",
+          "order": "desc"
+        },
+        "enabled": true
+      }
+    ]
+  },
+  "sentiment-pos-table": {
+    "params": {
+      "perPage": 10
+    },
+    "title": "INDEX_NAME_FIELD_NAME-sentiment-pos-table",
+    "type": "table",
+    "aggs": [
+      {
+        "schema": "metric",
+        "id": "1",
+        "type": "avg",
+        "params": {
+          "field": "FIELD_NAME_DetectSentiment.sentimentScore.positive"
+        },
+        "enabled": true
+      },
+      {
+        "schema": "bucket",
+        "id": "2",
+        "type": "terms",
+        "params": {
+          "field": "FIELD_NAME.keyword",
+          "size": 10,
+          "orderBy": "1",
+          "order": "desc"
+        },
+        "enabled": true
+      }
+    ]
+  },
+  "sentiment-time": {
+    "title": "INDEX_NAME_FIELD_NAME-sentiment-time",
+    "type": "line",
+    "aggs": [
+      {
+        "schema": "metric",
+        "id": "1",
+        "type": "count"
+      },
+      {
+        "schema": "segment",
+        "id": "2",
+        "type": "date_histogram",
+        "params": {
+          "field": "process_time",
+          "interval": "m",
+          "timeRange": {
+            "mode": "quick",
+            "from": "now-30m",
+            "to": "now"
+          }
+        }
+      },
+      {
+        "schema": "group",
+        "id": "3",
+        "type": "terms",
+        "params": {
+          "field": "FIELD_NAME_DetectSentiment.sentiment.keyword",
+          "size": 5
+        }
+      }
+    ]
+  },
+  "sentiment-type-count": {
+    "title": "INDEX_NAME_FIELD_NAME-sentiment-type-count",
+    "type": "metric",
+    "aggs": [
+      {
+        "schema": "metric",
+        "type": "count"
+      },
+      {
+        "schema": "group",
+        "type": "terms",
+        "params": {
+          "field": "FIELD_NAME_DetectSentiment.sentiment.keyword",
+          "size": 10
+        }
+      }
+    ]
+  },
+  "syntax-noun": {
+    "title": "INDEX_NAME_FIELD_NAME-syntax-noun",
+    "type": "tagcloud",
+    "aggs": [
+      {
+        "schema": "metric",
+        "type": "count"
+      },
+      {
+        "schema": "segment",
+        "type": "terms",
+        "params": {
+          "field": "FIELD_NAME_DetectSyntax_Kibana.NOUN.text.keyword",
+          "size": 25
+        }
+      }
+    ]
+  },
+  "syntax-verb": {
+    "title": "INDEX_NAME_FIELD_NAME-syntax-verb",
+    "type": "tagcloud",
+    "aggs": [
+      {
+        "schema": "metric",
+        "type": "count"
+      },
+      {
+        "schema": "segment",
+        "type": "terms",
+        "params": {
+          "field": "FIELD_NAME_DetectSyntax_Kibana.VERB.text.keyword",
+          "size": 25
+        }
+      }
+    ]
+  }
+}

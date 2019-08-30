@@ -1,0 +1,38 @@
+{
+  "mapping": {
+    "properties": {
+      "FIELD_NAME_DetectSyntax.syntaxTokens": {
+        "type": "nested"
+      },
+      "FIELD_NAME_DetectEntities.entities": {
+        "type": "nested"
+      },
+      "FIELD_NAME_DetectDominantLanguage.languages": {
+        "type": "nested"
+      },
+      "FIELD_NAME_DetectKeyPhrases.keyPhrases": {
+        "type": "nested"
+      }
+    }
+  },
+  "new-mapping": {
+    "mappings": {
+      "_doc": {
+        "properties": {
+          "FIELD_NAME_DetectSyntax.syntaxTokens": {
+            "type": "nested"
+          },
+          "FIELD_NAME_DetectEntities.entities": {
+            "type": "nested"
+          },
+          "FIELD_NAME_DetectDominantLanguage.languages": {
+            "type": "nested"
+          },
+          "FIELD_NAME_DetectKeyPhrases.keyPhrases": {
+            "type": "nested"
+          }
+        }
+      }
+    }
+  }
+}

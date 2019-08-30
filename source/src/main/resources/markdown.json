@@ -1,0 +1,38 @@
+{
+  "markdown-entity": {
+    "params": {
+      "openLinksInNewTab": true,
+      "markdown": "## Entity Dashboard \n Dashboard for Comprehend detect Entity results. Figure 1, Entity type: __COMMERCIAL_ITEM__. Figure 2, Entity type: __ORGANIZATION__. Figure 3, Entity type: __PERSON__. Figure 4, Entity type: __LOCATION__. Figure 5, Entity type: __EVENT__. Figure 6, Entity type: __TITLE__. \n For more information, check [AWS Doc, DetectEntities](https://docs.aws.amazon.com/comprehend/latest/dg/how-entities.html)"
+    },
+    "title": "markdown-entity",
+    "type": "markdown",
+    "aggs": []
+  },
+  "markdown-keyphrase": {
+    "params": {
+      "openLinksInNewTab": true,
+      "markdown": "## Key Phrases Dashboard \n Dashboard for Comprehend detect Key Phrases results. Figure 1, Key Phrases cloud tag. Figure 2, Key Phrases heat map. \n For more information, check [AWS Doc, DetectKeyPhrases](https://docs.aws.amazon.com/comprehend/latest/dg/how-key-phrases.html)"
+    },
+    "title": "markdown-keyphrase",
+    "type": "markdown",
+    "aggs": []
+  },
+  "markdown-sentiment": {
+    "params": {
+      "openLinksInNewTab": true,
+      "markdown": "## Sentiment Dashboard \n Dashboard for Comprehend detect Sentiment results. Figure 1, Sentiment vs. time. Figure 2, Sentiment control. Figure 3, Sentiment metrics. Figure 4, Top 10 Sentiment positive content. Figure 5, Top 10 Sentiment negative content. \n For more information, check [AWS Doc, DetectSentiment](https://docs.aws.amazon.com/comprehend/latest/dg/how-sentiment.html)"
+    },
+    "title": "markdown-sentiment",
+    "type": "markdown",
+    "aggs": []
+  },
+  "markdown-syntax": {
+    "params": {
+      "openLinksInNewTab": true,
+      "markdown": "## Syntax Dashboard \n Dashboard for Comprehend detect Syntax results. Figure 1, Syntax verb cloud tag. Figure 2, Syntax noun cloud tag. \n For more information, check [AWS Doc, DetectSyntax](https://docs.aws.amazon.com/comprehend/latest/dg/how-syntax.html)"
+    },
+    "title": "markdown-syntax",
+    "type": "markdown",
+    "aggs": []
+  }
+}
