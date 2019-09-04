@@ -36,7 +36,7 @@ export VERSION=v1.0
 export SOURCE_BUCKET_BASE_NAME=[CHANGE_ME]
 export ELASTICSEARCH_DOMAIN_NAME=[CHANGE_ME]
 ```
-- **aws-AWS_REGION-code**: AWS region code. Ex: ```us-east-1```.
+- **AWS_REGION**: AWS region code. Ex: ```us-east-1```.
 - **VERSION**: version of the package. EX: ```v1.0```.
 - **SOURCE_BUCKET_BASE_NAME**: Name for the S3 bucket location where the template will source the Lambda code from. The template will append ```-[aws-region-code]``` to this bucket name. For example: ```./build-s3-dist.sh solutions v1.1.0```, the template will then expect the source code to be located in the ```solutions-[aws-region-code]``` bucket.
 
