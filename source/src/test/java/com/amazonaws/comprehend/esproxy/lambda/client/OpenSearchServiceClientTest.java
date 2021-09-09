@@ -20,7 +20,7 @@ import java.io.IOException;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ElasticsearchClientTest {
+public class OpenSearchServiceClientTest {
     @Mock
     RestClient mockRestClient;
 
@@ -29,11 +29,11 @@ public class ElasticsearchClientTest {
 
     private final Request esRequest = new Request(HttpGet.METHOD_NAME, TestConstants.DUMMY_ENDPOINT);
 
-    private ElasticsearchClient test;
+    private OpenSearchServiceClient test;
 
     @Before
     public void setup() throws IOException {
-        test = new ElasticsearchClient(mockRestClient);
+        test = new OpenSearchServiceClient(mockRestClient);
         when(mockRestClient.performRequest(esRequest)).thenReturn(mockResponse);
     }
 

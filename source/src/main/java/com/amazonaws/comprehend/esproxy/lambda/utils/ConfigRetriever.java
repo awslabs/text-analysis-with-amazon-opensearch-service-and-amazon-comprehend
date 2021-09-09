@@ -1,6 +1,19 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License").
+// You may not use this file except in compliance with the License.
+// A copy of the License is located at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// or in the "license" file accompanying this file. This file is distributed
+// on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the License for the specific language governing
+// permissions and limitations under the License.
+
 package com.amazonaws.comprehend.esproxy.lambda.utils;
 
-import com.amazonaws.comprehend.esproxy.lambda.client.ElasticsearchClient;
+import com.amazonaws.comprehend.esproxy.lambda.client.OpenSearchServiceClient;
 import com.amazonaws.comprehend.esproxy.lambda.model.ComprehendConfiguration;
 import com.amazonaws.comprehend.esproxy.lambda.model.PreprocessingConfigRequest;
 import com.amazonaws.comprehend.esproxy.lambda.utils.serializer.ComprehendSerializer;
@@ -14,16 +27,16 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * To retrieve the stored Comprehend Elasticsearch Preprocessing Configuration
+ * To retrieve the stored Comprehend OpenSearch Service Preprocessing Configuration
  */
 @AllArgsConstructor
 public class ConfigRetriever {
     private final ComprehendSerializer<PreprocessingConfigRequest> configSerializer;
 
-    private final ElasticsearchClient esClient;
+    private final OpenSearchServiceClient esClient;
 
     /**
-     * Retrieve the stored Comprehend Elasticsearch Preprocessing Configuration
+     * Retrieve the stored Comprehend OpenSearch Service Preprocessing Configuration
      *
      * @return Preprocessing configuration as a Map(indexName_fieldName pair, ComprehendConfiguration)
      */

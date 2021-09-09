@@ -2,7 +2,7 @@ package com.amazonaws.comprehend.esproxy.lambda;
 
 import com.amazonaws.comprehend.esproxy.lambda.exception.InternalErrorException;
 import com.amazonaws.comprehend.esproxy.lambda.exception.InvalidRequestException;
-import com.amazonaws.comprehend.esproxy.lambda.processor.ElasticsearchProcessor;
+import com.amazonaws.comprehend.esproxy.lambda.processor.OpenSearchServiceProcessor;
 import com.amazonaws.comprehend.esproxy.lambda.utils.TestConstants;
 import com.amazonaws.comprehend.esproxy.lambda.utils.HTTPTransformer;
 import com.amazonaws.comprehend.esproxy.lambda.modules.ModuleConstants;
@@ -37,19 +37,19 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({RequestIdentifier.class, HTTPTransformer.class})
-public class ElasticsearchProxyRequestHandlerTest {
+public class OpenSearchServiceProxyRequestHandlerTest {
 
     @Mock
-    private ElasticsearchProcessor mockConfigProcessor;
+    private OpenSearchServiceProcessor mockConfigProcessor;
 
     @Mock
-    private ElasticsearchProcessor mockIndexProcessor;
+    private OpenSearchServiceProcessor mockIndexProcessor;
 
     @Mock
-    private ElasticsearchProcessor mockBulkProcessor;
+    private OpenSearchServiceProcessor mockBulkProcessor;
 
     @Mock
-    private ElasticsearchProcessor mockDefaultProcessor;
+    private OpenSearchServiceProcessor mockDefaultProcessor;
 
     @Mock
     private APIGatewayProxyRequestEvent mockRequestEvent;
@@ -68,20 +68,20 @@ public class ElasticsearchProxyRequestHandlerTest {
 
     private Request esRequest;
 
-    private ElasticsearchProxyRequestHandler test;
+    private OpenSearchServiceProxyRequestHandler test;
 
     @Before
     public void setup() {
         AbstractModule module = new AbstractModule() {
             @Override
             protected void configure() {
-                bind(ElasticsearchProcessor.class)
+                bind(OpenSearchServiceProcessor.class)
                         .annotatedWith(Names.named(ModuleConstants.PREPROCESSING_CONFIG_PROCESSOR)).toInstance(mockConfigProcessor);
-                bind(ElasticsearchProcessor.class)
+                bind(OpenSearchServiceProcessor.class)
                         .annotatedWith(Names.named(ModuleConstants.INDEX_PROCESSOR)).toInstance(mockIndexProcessor);
-                bind(ElasticsearchProcessor.class)
+                bind(OpenSearchServiceProcessor.class)
                         .annotatedWith(Names.named(ModuleConstants.BULK_PROCESSOR)).toInstance(mockBulkProcessor);
-                bind(ElasticsearchProcessor.class)
+                bind(OpenSearchServiceProcessor.class)
                         .annotatedWith(Names.named(ModuleConstants.DEFAULT_PROCESSOR)).toInstance(mockDefaultProcessor);
             }
         };
@@ -93,7 +93,7 @@ public class ElasticsearchProxyRequestHandlerTest {
         when(HTTPTransformer.apiGatewayRequestToESRequest(mockRequestEvent)).thenReturn(esRequest);
         when(mockContext.getLogger()).thenReturn(mockLogger);
 
-        test = new ElasticsearchProxyRequestHandler(injector);
+        test = new OpenSearchServiceProxyRequestHandler(injector);
     }
 
     @Test
@@ -141,7 +141,7 @@ public class ElasticsearchProxyRequestHandlerTest {
 
     // End2end related failures
     @Test
-    public void failedElasticsearchClientPerformRequest() {
+    public void failedOpenSearchServiceClientPerformRequest() {
         when(RequestIdentifier.isConfigRequest(esRequest)).thenReturn(false);
         when(RequestIdentifier.isMutationRequest(esRequest)).thenReturn(false);
 

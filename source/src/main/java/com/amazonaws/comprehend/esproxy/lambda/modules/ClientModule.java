@@ -1,10 +1,23 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License").
+// You may not use this file except in compliance with the License.
+// A copy of the License is located at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// or in the "license" file accompanying this file. This file is distributed
+// on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the License for the specific language governing
+// permissions and limitations under the License.
+
 package com.amazonaws.comprehend.esproxy.lambda.modules;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWS4Signer;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.comprehend.esproxy.lambda.client.ElasticsearchClient;
+import com.amazonaws.comprehend.esproxy.lambda.client.OpenSearchServiceClient;
 import com.amazonaws.comprehend.esproxy.lambda.utils.Constants;
 import com.amazonaws.http.AWSRequestSigningApacheInterceptor;
 import com.amazonaws.services.comprehend.AmazonComprehend;
@@ -21,7 +34,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
- *  Build ElasticsearchClient & AmazonComprehend client
+ *  Build OpenSearchServiceClient & AmazonComprehend client
  */
 public class ClientModule extends AbstractModule {
     @Override
@@ -55,18 +68,18 @@ public class ClientModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public ElasticsearchClient buildElasticsearchClient(final HttpRequestInterceptor interceptor,
-                                                        @Named(ModuleConstants.ELASTICSEARCH_DOMAIN_ENDPOINT)
-                                                        final String elasticsearchDomainEndpoint) {
+    public OpenSearchServiceClient buildOpenSearchServiceClient(final HttpRequestInterceptor interceptor,
+                                                                @Named(ModuleConstants.OPEN_SEARCH_SERVICE_DOMAIN_ENDPOINT)
+                                                        final String opensearchDomainEndpoint) {
         final Header[] headers = new Header[]{new BasicHeader(Constants.USER_AGENT_NAME,
                 Constants.USER_AGENT_VALUE)};
-        final String endpointWithProtocol = String.format("%s%s", Constants.PROTOCOL, elasticsearchDomainEndpoint);
+        final String endpointWithProtocol = String.format("%s%s", Constants.PROTOCOL, opensearchDomainEndpoint);
 
         RestClient restClient = RestClient.builder(HttpHost.create(endpointWithProtocol))
                 .setHttpClientConfigCallback(hacb -> hacb.addInterceptorLast(interceptor))
                 .setDefaultHeaders(headers)
                 .build();
-        return new ElasticsearchClient(restClient);
+        return new OpenSearchServiceClient(restClient);
     }
 
     @Provides

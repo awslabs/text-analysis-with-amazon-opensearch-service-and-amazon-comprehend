@@ -1,6 +1,6 @@
 package com.amazonaws.comprehend.esproxy.lambda.processor;
 
-import com.amazonaws.comprehend.esproxy.lambda.client.ElasticsearchClient;
+import com.amazonaws.comprehend.esproxy.lambda.client.OpenSearchServiceClient;
 import com.amazonaws.comprehend.esproxy.lambda.exception.InternalErrorException;
 import com.amazonaws.comprehend.esproxy.lambda.model.BatchFieldLocator;
 import com.amazonaws.comprehend.esproxy.lambda.processor.response.BatchResponse;
@@ -50,7 +50,7 @@ public class BulkProcessorTest {
     @Mock
     private AmazonComprehend mockComprehendClient;
     @Mock
-    private ElasticsearchClient mockESClient;
+    private OpenSearchServiceClient mockESClient;
     @Mock
     private ConfigRetriever mockConfigRetriever;
     @Mock
@@ -143,7 +143,7 @@ public class BulkProcessorTest {
 
         test.processRequest(request, mockLogger);
         verify(mockLogger, times(1))
-                .log("Ingest Comprehend enriched bulk results to Elasticsearch");
+                .log("Ingest Comprehend enriched bulk results to OpenSearchService");
     }
 
     @Test
@@ -171,7 +171,7 @@ public class BulkProcessorTest {
 
         test.processRequest(request, mockLogger);
         verify(mockLogger, times(1))
-                .log("Ingest Comprehend enriched bulk results to Elasticsearch");
+                .log("Ingest Comprehend enriched bulk results to OpenSearchService");
     }
 
     @Test(expected = InternalErrorException.class)

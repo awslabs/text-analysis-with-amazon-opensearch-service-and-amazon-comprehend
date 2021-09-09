@@ -13,31 +13,24 @@
 
 package com.amazonaws.comprehend.esproxy.lambda.processor;
 
-import com.amazonaws.comprehend.esproxy.lambda.client.OpenSearchServiceClient;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 
 /**
- * The DefaultProcessor that process Comprehend OpenSearchService proxy requests without modifying the content
+ * {@code OpenSearchServiceProcessor} is the interface of all processors that
+ * processes OpenSearch Service proxy request.
  */
-@RequiredArgsConstructor
-public class DefaultProcessor implements OpenSearchServiceProcessor {
-    @NonNull
-    private final OpenSearchServiceClient esClient;
+public interface OpenSearchServiceProcessor {
+    // Process OpenSearchService request and return OpenSearchService response
 
     /**
-     * Process Comprehend OpenSearchService proxy requests without modifying the content
+     * Process the received OpenSearchService client request and return OpenSearchService client response
      *
      * @param request The received OpenSearchService client request
      * @param logger  The LambdaLogger to output logs from the function code
-     * @return OpenSearchService service response
+     * @return The received OpenSearchService client response from Amazon OpenSearchService service
      */
-    @Override
-    public Response processRequest(@NonNull final Request request, @NonNull final LambdaLogger logger) {
-        logger.log("Default OpenSearchService requests detected");
-        return esClient.performRequest(request);
-    }
+    Response processRequest(@NonNull final Request request, @NonNull final LambdaLogger logger);
 }

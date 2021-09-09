@@ -1,6 +1,6 @@
 package com.amazonaws.comprehend.esproxy.lambda.processor;
 
-import com.amazonaws.comprehend.esproxy.lambda.client.ElasticsearchClient;
+import com.amazonaws.comprehend.esproxy.lambda.client.OpenSearchServiceClient;
 import com.amazonaws.comprehend.esproxy.lambda.exception.InternalErrorException;
 import com.amazonaws.comprehend.esproxy.lambda.processor.response.SingularResponse;
 import com.amazonaws.comprehend.esproxy.lambda.utils.ConfigRetriever;
@@ -48,7 +48,7 @@ public class IndexProcessorTest {
     private AmazonComprehend mockComprehendClient;
 
     @Mock
-    private ElasticsearchClient mockESClient;
+    private OpenSearchServiceClient mockESClient;
 
     @Mock
     private ConfigRetriever mockConfigRetriever;
@@ -126,7 +126,7 @@ public class IndexProcessorTest {
         when(mockExecutorService.invokeAll(any(executorList.getClass()))).thenReturn(executorResultList);
 
         test.processRequest(request, mockLogger);
-        verify(mockLogger, times(1)).log("Ingest Comprehend enriched results to Elasticsearch");
+        verify(mockLogger, times(1)).log("Ingest Comprehend enriched results to OpenSearchService");
     }
 
     @Test
@@ -151,7 +151,7 @@ public class IndexProcessorTest {
         when(mockExecutorService.invokeAll(any(executorList.getClass()))).thenReturn(executorResultList);
 
         test.processRequest(request, mockLogger);
-        verify(mockLogger, times(1)).log("Ingest Comprehend enriched results to Elasticsearch");
+        verify(mockLogger, times(1)).log("Ingest Comprehend enriched results to OpenSearchService");
     }
 
     @Test
@@ -177,7 +177,7 @@ public class IndexProcessorTest {
         when(mockExecutorService.invokeAll(any(executorList.getClass()))).thenReturn(executorResultList);
 
         test.processRequest(request, mockLogger);
-        verify(mockLogger, times(1)).log("Ingest Comprehend enriched results to Elasticsearch");
+        verify(mockLogger, times(1)).log("Ingest Comprehend enriched results to OpenSearchService");
     }
 
     @Test(expected = InternalErrorException.class)

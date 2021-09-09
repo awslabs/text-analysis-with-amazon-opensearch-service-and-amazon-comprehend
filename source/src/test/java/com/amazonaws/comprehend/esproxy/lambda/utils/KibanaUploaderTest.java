@@ -1,6 +1,6 @@
 package com.amazonaws.comprehend.esproxy.lambda.utils;
 
-import com.amazonaws.comprehend.esproxy.lambda.client.ElasticsearchClient;
+import com.amazonaws.comprehend.esproxy.lambda.client.OpenSearchServiceClient;
 import com.amazonaws.comprehend.esproxy.lambda.exception.InternalErrorException;
 import com.amazonaws.comprehend.esproxy.lambda.utils.kibana.KibanaHelper;
 import com.amazonaws.comprehend.esproxy.lambda.utils.kibana.KibanaUploader;
@@ -29,7 +29,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class KibanaUploaderTest {
     @Mock
-    private ElasticsearchClient mockESClient;
+    private OpenSearchServiceClient mockESClient;
 
     @Mock
     private LambdaLogger mockLogger;

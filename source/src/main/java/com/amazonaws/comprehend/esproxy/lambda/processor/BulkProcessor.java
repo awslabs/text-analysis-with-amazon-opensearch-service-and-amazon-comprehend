@@ -1,6 +1,19 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License").
+// You may not use this file except in compliance with the License.
+// A copy of the License is located at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// or in the "license" file accompanying this file. This file is distributed
+// on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the License for the specific language governing
+// permissions and limitations under the License.
+
 package com.amazonaws.comprehend.esproxy.lambda.processor;
 
-import com.amazonaws.comprehend.esproxy.lambda.client.ElasticsearchClient;
+import com.amazonaws.comprehend.esproxy.lambda.client.OpenSearchServiceClient;
 import com.amazonaws.comprehend.esproxy.lambda.exception.CustomerMessage;
 import com.amazonaws.comprehend.esproxy.lambda.exception.InternalErrorException;
 import com.amazonaws.comprehend.esproxy.lambda.model.BatchFieldLocator;
@@ -41,10 +54,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Processor to process Comprehend Elasticsearch Bulk requests
+ * Processor to process Comprehend OpenSearchService Bulk requests
  */
 @RequiredArgsConstructor
-public class BulkProcessor implements ElasticsearchProcessor {
+public class BulkProcessor implements OpenSearchServiceProcessor {
     @NonNull
     private final ComprehendSerializer<JsonNode> ingestionSerializer;
 
@@ -52,7 +65,7 @@ public class BulkProcessor implements ElasticsearchProcessor {
     private final AmazonComprehend comprehendClient;
 
     @NonNull
-    private final ElasticsearchClient esClient;
+    private final OpenSearchServiceClient esClient;
 
     @NonNull
     private final ConfigRetriever configRetriever;
@@ -61,11 +74,11 @@ public class BulkProcessor implements ElasticsearchProcessor {
     private final ExecutorService executorService;
 
     /**
-     * Process Comprehend Elasticsearch Bulk requests
+     * Process Comprehend OpenSearchService Bulk requests
      *
-     * @param request The received Elasticsearch client request
+     * @param request The received OpenSearchService client request
      * @param logger  The LambdaLogger to output logs from the function code
-     * @return Elasticsearch service response
+     * @return OpenSearchService service response
      */
     @Override
     public Response processRequest(@NonNull final Request request, @NonNull final LambdaLogger logger) {
@@ -112,7 +125,7 @@ public class BulkProcessor implements ElasticsearchProcessor {
             Request transformedRequest = new Request(request.getMethod(), request.getEndpoint());
             transformedRequest.setJsonEntity(String.join(System.lineSeparator(), payloadList) + System.lineSeparator());
 
-            logger.log("Ingest Comprehend enriched bulk results to Elasticsearch");
+            logger.log("Ingest Comprehend enriched bulk results to OpenSearchService");
             Response response = esClient.performRequest(transformedRequest);
 
             logger.log(String.format("Response of bulk request: statusCode = %d, reasonPhrase = %s",

@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
-    "(SO0060) - Analyzing-text-with-amazon-elasticsearch-service-and-amazon-comprehend:
-    - Example solution template. Template Version 1"
+    "(%%SOLUTION_ID%%) - Text-analysis-with-amazon-opensearch-service-and-amazon-comprehend:
+    - Example solution template. Template Version %%VERSION%%"
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -18,7 +18,7 @@ Metadata:
           - APIGatewayAuthorizationType
       -
         Label:
-          default: "Elasticsearch VPC"
+          default: "OpenSearch Service VPC"
         Parameters:
           - VpcCidrBlock
           - PublicSubnet01Block
@@ -27,20 +27,20 @@ Metadata:
           - PrivateSubnet02Block
       -
         Label:
-          default: "Elasticsearch Encryption"
+          default: "OpenSearch Service Encryption"
         Parameters:
           - EnableEncryptionAtRest
           - EnableNodeToNodeEncryption
       -
         Label:
-          default: "Elasticsearch EBS"
+          default: "OpenSearch Service EBS"
         Parameters:
-          - ElasticsearchEnableEBS
+          - OpenSearchServiceEnableEBS
           - EBSVolumeType
           - EBSVolumeSizeInGB
       -
         Label:
-          default: "Elasticsearch ClusterConfig"
+          default: "OpenSearch Service ClusterConfig"
         Parameters:
           - EnableDedicatedMaster
           - DedicatedMasterCount
@@ -50,42 +50,42 @@ Metadata:
           default: "Optional"
         Parameters:
           - Stage
-          - ESServiceRoleExists
+          - OpenSearchServiceRoleExists
 
 Mappings:
   Send:
     AnonymousUsage:
       Data: "Yes"
   Function:
-    ComprehendESLambdaFunction:
+    ComprehendOpenSearchServiceLambdaFunction:
       S3Bucket: %%BUCKET_NAME%%
-      S3Key: analyzing-text-with-amazon-elasticsearch-service-and-amazon-comprehend/%%VERSION%%/analyzing-text-with-amazon-elasticsearch-service-and-amazon-comprehend.jar
+      S3Key: %%SOLUTION_NAME%%/%%VERSION%%/%%SOLUTION_NAME%%.jar
 
 Parameters:
   DomainName:
-    Description: Domain name for Elasticsearch service
+    Description: Domain name for OpenSearch Service
     Type: String
     AllowedPattern: "^[a-z0-9-]*$"
     MaxLength: 28
     ConstraintDescription: "The name must start with a lowercase letter and must be between 3 and 28 characters.
         Valid characters are a-z (lowercase only), 0-9, and - (hyphen). Must have length less than or equal to 28"
   InstanceType:
-    Description: "Instance type for Amazon Elasticsearch domain. https://aws.amazon.com/elasticsearch-service/pricing/"
+    Description: "Instance type for Amazon OpenSearch Service domain. https://aws.amazon.com/elasticsearch-service/pricing/"
     Type: String
     AllowedPattern: "^[a-z0-9]{2}\\.[a-z0-9]+\\.elasticsearch$"
     Default: 'm4.large.elasticsearch'
   InstanceCount:
-    Description: The number of instances for the Elasticsearch domain.
+    Description: The number of instances for the OpenSearch Service domain.
     Type: Number
     Default: 2
     MinValue: 2
   EnableVPC:
-    Description: Enable or disable VPC for lambda & Elasticsearch
+    Description: Enable or disable VPC for lambda & OpenSearch Service
     Type: String
     Default: 'false'
     AllowedValues: ['true', 'false']
   IPToAccessKibanaDashboard:
-    Description: The ip address or cidr you want to grant access to Elasticsearch domain. Note this won't be used if you enabled VPC.
+    Description: The ip address or cidr you want to grant access to OpenSearch Service domain. Note this won't be used if you enabled VPC.
     Type: String
     Default: 10.0.0.0/16
     AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))?$"
@@ -94,7 +94,7 @@ Parameters:
     Type: String
     Default: 'NONE'
     AllowedValues: ['NONE', 'AWS_IAM']
-  # Elasticsearch VPC
+  # OpenSearch Service VPC
   VpcCidrBlock:
     Description: CidrBlock for VPC
     Type: String
@@ -120,7 +120,7 @@ Parameters:
     Type: String
     Default: 10.0.3.0/24
     AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$"
-  # Elasticsearch Encryption
+  # OpenSearch Service Encryption
   EnableEncryptionAtRest:
     Type: String
     Default: 'true'
@@ -129,25 +129,25 @@ Parameters:
     Type: String
     Default: 'true'
     AllowedValues: ['true', 'false']
-  # Elasticsearch EBS
-  ElasticsearchEnableEBS:
-    Description: Enable or disable EBS storage type for Elasticsearch
+  # OpenSearch Service EBS
+  OpenSearchServiceEnableEBS:
+    Description: Enable or disable EBS storage type for OpenSearch Service
     Type: String
     Default: 'true'
     AllowedValues: ['true', 'false']
   EBSVolumeType:
-    Description: Elasticsearch EBS volume type
+    Description: OpenSearch Service EBS volume type
     Type: String
     Default: 'standard'
     AllowedValues: ['standard', 'gp2', 'io1', 'st1', 'sc1']
   EBSVolumeSizeInGB:
-    Description: Elasticsearch EBS storage size per node.
+    Description: OpenSearch Service EBS storage size per node.
     Type: Number
     Default: 10
     MaxValue: 3584
     MinValue: 10
     ConstraintDescription: "Volume size must be an integer between 10 and 3584."
-  # Elasticsearch ClusterConfig
+  # OpenSearch Service ClusterConfig
   EnableDedicatedMaster:
     Type: String
     Default: 'true'
@@ -170,8 +170,8 @@ Parameters:
     Default: 'prod'
     AllowedPattern: "^[a-zA-Z0-9_]*$"
     ConstraintDescription: "The name must contain only a-zA-Z0-9_"
-  ESServiceRoleExists:
-    Description: Choose whether ServiceLinkedRole for Elasticsearch VPC access already exists"
+  OpenSearchServiceRoleExists:
+    Description: Choose whether ServiceLinkedRole for OpenSearch Service VPC access already exists
     Type: String
     Default: 'false'
     AllowedValues: ['true', 'false']
@@ -183,48 +183,48 @@ Conditions:
       - 'true'
   IsEBSEnabled:
     Fn::Equals:
-      - Ref: ElasticsearchEnableEBS
+      - Ref: OpenSearchServiceEnableEBS
       - 'true'
   ServiceRoleNotExists:
     Fn::Equals:
-      - Ref: ESServiceRoleExists
+      - Ref: OpenSearchServiceRoleExists
       - 'false'
 
 Outputs:
   ExampleProxyAccessRoleArn:
     Description: 'IAM Role to invoke APIGateway'
     Value:
-      Fn::GetAtt: ComprehendESAPIGatewayIAMRole.Arn
+      !GetAtt ComprehendOpenSearchServiceAPIGatewayIAMRole.Arn
   ProxyAccessPolicyArn:
     Description: 'IAM managed policy to access proxy API'
     Value:
-        Ref: ComprehendESAPIGatewayAccessPolicy
+      Ref: ComprehendOpenSearchServiceAPIGatewayAccessPolicy
   ProxyEndpoint:
-    Description: 'URL of Elasticsearch domain proxy endpoint'
+    Description: 'URL of OpenSearch Service domain proxy endpoint'
     Value:
-      Fn::Sub: "https://${ComprehendESProxyAPI}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/"
-  ElasticsearchEndpoint:
-    Description: 'Elasticsearch endpoint'
+      Fn::Sub: "https://${ComprehendOpenSearchServiceProxyAPI}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/"
+  OpenSearchServiceEndpoint:
+    Description: 'OpenSearch Service endpoint'
     Value:
       Fn::Join:
         - ''
         - - 'https://'
-          - Fn::GetAtt: 'ComprehendESDomain.DomainEndpoint'
+          - !GetAtt 'ComprehendOpenSearchServiceDomain.DomainEndpoint'
   KibanaDashboardURL:
     Description: 'URL to access Kibana dashboard'
     Value:
       Fn::Join:
         - ''
         - - 'https://'
-          - Fn::GetAtt: 'ComprehendESDomain.DomainEndpoint'
+          - !GetAtt 'ComprehendOpenSearchServiceDomain.DomainEndpoint'
           - '/_plugin/kibana'
 
 Resources:
-  ComprehendESProxyAPI:
+  ComprehendOpenSearchServiceProxyAPI:
     Type: AWS::ApiGateway::RestApi
     Properties:
-      Name: "ComprehendESProxyAPI"
-      Description: 'Comprehend Elasticsearch Proxy rest API'
+      Name: "ComprehendOpenSearchServiceProxyAPI"
+      Description: 'Comprehend OpenSearch Service Proxy rest API'
       Parameters:
         endpointConfigurationTypes: REGIONAL
       Body:
@@ -237,25 +237,25 @@ Resources:
           - "https"
 
   # API Gateway Resource, Validator & Method
-  ComprehendESProxyAPIResource:
+  ComprehendOpenSearchServiceProxyAPIResource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
-      ParentId: !GetAtt ComprehendESProxyAPI.RootResourceId
-      RestApiId: !Ref ComprehendESProxyAPI
+      ParentId: !GetAtt ComprehendOpenSearchServiceProxyAPI.RootResourceId
+      RestApiId: !Ref ComprehendOpenSearchServiceProxyAPI
       PathPart: '{proxy+}'
-  ComprehendESProxyAPIRequestValidator:
+  ComprehendOpenSearchServiceProxyAPIRequestValidator:
     Type: 'AWS::ApiGateway::RequestValidator'
     Properties:
-      RestApiId: !Ref ComprehendESProxyAPI
+      RestApiId: !Ref ComprehendOpenSearchServiceProxyAPI
       ValidateRequestBody: true
       ValidateRequestParameters: true
-  ComprehendESProxyAPIMethod:
+  ComprehendOpenSearchServiceProxyAPIMethod:
     Type: 'AWS::ApiGateway::Method'
     Properties:
       AuthorizationType: !Ref APIGatewayAuthorizationType
       HttpMethod: ANY
-      ResourceId: !Ref ComprehendESProxyAPIResource
-      RestApiId: !Ref ComprehendESProxyAPI
+      ResourceId: !Ref ComprehendOpenSearchServiceProxyAPIResource
+      RestApiId: !Ref ComprehendOpenSearchServiceProxyAPI
       RequestParameters:
         method.request.path.proxy: true
       Integration:
@@ -265,30 +265,42 @@ Resources:
         IntegrationResponses:
           - StatusCode: 200
         Credentials:
-          Fn::GetAtt: [ComprehendESAPIGatewayExecutionRole, Arn]
+          Fn::GetAtt: [ComprehendOpenSearchServiceAPIGatewayExecutionRole, Arn]
         Uri:
-          Fn::Sub: "arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${ComprehendESLambda}/invocations"
+          Fn::Sub: "arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${ComprehendOpenSearchServiceLambda}/invocations"
 
   # Deployment & Stages
-  ComprehendESProxyAPIDeployment:
+  ComprehendOpenSearchServiceProxyAPIDeployment:
     Type: AWS::ApiGateway::Deployment
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W68
+            reason: "Suppress AWS::ApiGateway::Deployment resources should be associated with an AWS::ApiGateway::UsagePlan warning. New CFN resources are out of scope for 9/7 rebranding launch."
     DependsOn:
-      - ComprehendESProxyAPIMethod
+      - ComprehendOpenSearchServiceProxyAPIMethod
     Properties:
       RestApiId:
-        Ref: ComprehendESProxyAPI
-      Description: 'Comprehend Elasticsearch Proxy API deployment'
-  ComprehendESProxyAPIProdStage:
+        Ref: ComprehendOpenSearchServiceProxyAPI
+      Description: 'Comprehend OpenSearch Service Proxy API deployment'
+  ComprehendOpenSearchServiceProxyAPIProdStage:
     Type: AWS::ApiGateway::Stage
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W64
+            reason: "Suppress AWS::ApiGateway::Deployment resources should be associated with an AWS::ApiGateway::UsagePlan warning. New CFN resources are out of scope for 9/7 rebranding launch."
+          - id: W69
+            reason: "Suppress AWS::ApiGateway::Stage should have the AccessLogSetting property defined warning. Customer can specify CloudWatch log role ARN in API Gateway settings."
     Properties:
       DeploymentId:
-        Ref: ComprehendESProxyAPIDeployment
+        Ref: ComprehendOpenSearchServiceProxyAPIDeployment
       RestApiId:
-        Ref: ComprehendESProxyAPI
+        Ref: ComprehendOpenSearchServiceProxyAPI
       StageName: {Ref: Stage}
 
   # IAM policy for customer to access API Gateway
-  ComprehendESAPIGatewayAccessPolicy:
+  ComprehendOpenSearchServiceAPIGatewayAccessPolicy:
     Type: AWS::IAM::ManagedPolicy
     Metadata:
       cfn_nag:
@@ -302,10 +314,10 @@ Resources:
           - Action: ["execute-api:Invoke","execute-api:ManageConnections"]
             Effect: Allow
             Resource:
-              - Fn::Sub: 'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${ComprehendESProxyAPI}/*'
+              - Fn::Sub: 'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${ComprehendOpenSearchServiceProxyAPI}/*'
         Version: '2012-10-17'
   # IAM role for customer to access API Gateway
-  ComprehendESAPIGatewayIAMRole:
+  ComprehendOpenSearchServiceAPIGatewayIAMRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -317,9 +329,9 @@ Resources:
                 Fn::Sub: 'arn:${AWS::Partition}:iam::${AWS::AccountId}:root'
         Version: '2012-10-17'
       ManagedPolicyArns:
-        - Ref: ComprehendESAPIGatewayAccessPolicy
+        - Ref: ComprehendOpenSearchServiceAPIGatewayAccessPolicy
   # Role for API Gateway to access lambda
-  ComprehendESAPIGatewayExecutionRole:
+  ComprehendOpenSearchServiceAPIGatewayExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -335,13 +347,13 @@ Resources:
               - Action: ['lambda:InvokeFunction']
                 Effect: Allow
                 Resource:
-                  - Fn::Sub: 'arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${ComprehendESLambda}'
+                  - Fn::Sub: 'arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${ComprehendOpenSearchServiceLambda}'
             Version: '2012-10-17'
           PolicyName: apigInvokeLambda
 
 
-  # Elasticsearch Domain
-  ComprehendESDomain:
+  # OpenSearch Service Domain
+  ComprehendOpenSearchServiceDomain:
     Type: AWS::Elasticsearch::Domain
     Metadata:
       cfn_nag:
@@ -349,12 +361,6 @@ Resources:
           - id: W28
             reason: "Name is needed to construct the domain policy, which refers to the domain arn"
     Properties:
-      DomainName: {Ref: DomainName}
-      ElasticsearchVersion: '6.7'
-      EncryptionAtRestOptions:
-        Enabled: {Ref: EnableEncryptionAtRest}
-      NodeToNodeEncryptionOptions:
-        Enabled: {Ref: EnableNodeToNodeEncryption}
       ElasticsearchClusterConfig:
         InstanceCount: {Ref: InstanceCount}
         InstanceType: {Ref: InstanceType}
@@ -362,9 +368,15 @@ Resources:
         DedicatedMasterEnabled: {Ref: EnableDedicatedMaster}
         DedicatedMasterType: {Ref: DedicatedMasterType}
         ZoneAwarenessEnabled: {Ref: EnableZoneAwareness}
+      DomainName: {Ref: DomainName}
+      ElasticsearchVersion: '6.7'
+      EncryptionAtRestOptions:
+        Enabled: {Ref: EnableEncryptionAtRest}
+      NodeToNodeEncryptionOptions:
+        Enabled: {Ref: EnableNodeToNodeEncryption}
       EBSOptions:
         EBSEnabled:
-          Ref: ElasticsearchEnableEBS
+          Ref: OpenSearchServiceEnableEBS
         VolumeType:
           Fn::If:
             - IsEBSEnabled
@@ -385,7 +397,7 @@ Resources:
               - Effect: Allow
                 Principal:
                   AWS:
-                    - Fn::Sub: 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${ComprehendESLambdaRole}'
+                    - Fn::Sub: 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${ComprehendOpenSearchServiceLambdaRole}'
                 Action: 'es:*'
                 Resource:
                   Fn::Sub: 'arn:${AWS::Partition}:es:${AWS::Region}:${AWS::AccountId}:domain/${DomainName}/*'
@@ -394,7 +406,7 @@ Resources:
               - Effect: Allow
                 Principal:
                   AWS:
-                    Fn::Sub: 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${ComprehendESLambdaRole}'
+                    Fn::Sub: 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${ComprehendOpenSearchServiceLambdaRole}'
                 Action: 'es:*'
                 Resource:
                   Fn::Sub: 'arn:${AWS::Partition}:es:${AWS::Region}:${AWS::AccountId}:domain/${DomainName}/*'
@@ -414,33 +426,33 @@ Resources:
         Fn::If:
           - IsVPCEnabled
           - SecurityGroupIds:
-              - Ref: ComprehendESSecurityGroup
+              - Ref: ComprehendOpenSearchServiceSecurityGroup
             SubnetIds:
-              - Ref: ComprehendESPublicSubnet01
-              - Ref: ComprehendESPublicSubnet02
+              - Ref: ComprehendOpenSearchServicePublicSubnet01
+              - Ref: ComprehendOpenSearchServicePublicSubnet02
           - Ref: AWS::NoValue
-  ElasticsearchServiceLinkedRole:
+  OpenSearchServiceLinkedRole:
     Type: AWS::IAM::ServiceLinkedRole
     Condition: ServiceRoleNotExists
     Properties:
       AWSServiceName: "es.amazonaws.com"
-      Description: "Enable a service-linked role to give Amazon ES permissions to access VPC"
+      Description: "Enable a service-linked role to give Amazon OpenSearch Service permissions to access VPC"
 
-  ComprehendESLambda:
+  ComprehendOpenSearchServiceLambda:
     Properties:
       Code:
-        S3Bucket: !Join ['-', [!FindInMap [ Function, ComprehendESLambdaFunction, S3Bucket], !Ref 'AWS::Region']]
-        S3Key: !FindInMap [ Function, ComprehendESLambdaFunction, S3Key]
-      Handler: 'com.amazonaws.comprehend.esproxy.lambda.ElasticsearchProxyRequestHandler::handleRequest'
+        S3Bucket: !Join ['-', [!FindInMap [ Function, ComprehendOpenSearchServiceLambdaFunction, S3Bucket], !Ref 'AWS::Region']]
+        S3Key: !FindInMap [ Function, ComprehendOpenSearchServiceLambdaFunction, S3Key]
+      Handler: 'com.amazonaws.comprehend.esproxy.lambda.OpenSearchServiceProxyRequestHandler::handleRequest'
       Environment:
         Variables:
-          ElasticsearchDomainEndpoint:
-            Fn::GetAtt: 'ComprehendESDomain.DomainEndpoint'
+          OpenSearchServiceDomainEndpoint:
+            !GetAtt 'ComprehendOpenSearchServiceDomain.DomainEndpoint'
           Region:
             Ref: 'AWS::Region'
       MemorySize: 512
       Role:
-        Fn::GetAtt: [ComprehendESLambdaRole, Arn]
+        Fn::GetAtt: [ComprehendOpenSearchServiceLambdaRole, Arn]
       Runtime: java8
       Timeout: 300
       VpcConfig:
@@ -448,16 +460,23 @@ Resources:
           - IsVPCEnabled
           - SecurityGroupIds: [{Ref: ProxyServiceSecurityGroup}]
             SubnetIds:
-              - Ref: ComprehendESPrivateSubnet01
-              - Ref: ComprehendESPrivateSubnet02
+              - Ref: ComprehendOpenSearchServicePrivateSubnet01
+              - Ref: ComprehendOpenSearchServicePrivateSubnet02
           - Ref: 'AWS::NoValue'
     Type: AWS::Lambda::Function
-  ComprehendESLambdaRole:
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+            reason: "Lambda functions require permission to write CloudWatch logs. Added policy for permission defined in ComprehendOpenSearchServiceLambdaRole's ManagedPolicyArns"
+          - id: W92
+            reason: "Suppress Lambda functions should define ReservedConcurrentExecutions to reserve simultaneous executions warning. Keeping original lambda behaviour and will revisit after 9/7 launch."
+  ComprehendOpenSearchServiceLambdaRole:
     Metadata:
       cfn_nag:
         rules_to_suppress:
           - id: W11
-            reason: "Amazon Comprehend Detect and BatchDetect APIs dont have associated resources. "
+            reason: "Amazon Comprehend Detect and BatchDetect APIs dont have associated resources."
     Properties:
       AssumeRolePolicyDocument:
         Statement:
@@ -468,6 +487,7 @@ Resources:
         Version: '2012-10-17'
       ManagedPolicyArns:
         - Fn::Sub: 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole'
+        - Fn::Sub: 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
       Policies:
         - PolicyDocument:
             Statement:
@@ -484,26 +504,36 @@ Resources:
                 Effect: Allow
                 Resource: '*'
             Version: '2012-10-17'
-          PolicyName: ComprehendESLambdaRolePolicy
+          PolicyName: ComprehendOpenSearchServiceLambdaRolePolicy
     Type: AWS::IAM::Role
-  ComprehendESLambdaLogGroup:
-    DependsOn: ComprehendESLambda
+  ComprehendOpenSearchServiceLambdaLogGroup:
+    DependsOn: ComprehendOpenSearchServiceLambda
     Properties:
-      LogGroupName: {"Fn::Sub": "/aws/lambda/${ComprehendESLambda}"}
+      LogGroupName: {"Fn::Sub": "/aws/lambda/${ComprehendOpenSearchServiceLambda}"}
     Type: AWS::Logs::LogGroup
-
-
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "CloudWatch logs are by default encrypted (refer https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html). KMS key ID not needed."
+          - id: W86
+            reason: "Suppress RetentionInDays not specified warning. Keeping original retention behavior and will revisit after 9/7 launch"
   # VPC
-  ComprehendESVPC:
+  ComprehendOpenSearchServiceVPC:
     Condition: IsVPCEnabled
     Properties:
       CidrBlock: {Ref: VpcCidrBlock}
       Tags:
         - Key: Name
-          Value: 'ComprehendESVPC'
+          Value: 'ComprehendOpenSearchServiceVPC'
     Type: AWS::EC2::VPC
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W60
+            reason: "Suppress VPC flow logs not needed warning. Retaining original VPC logs behavior and will revisit after 9/7 launch"
   # Subnet
-  ComprehendESPublicSubnet01:
+  ComprehendOpenSearchServicePublicSubnet01:
     Condition: IsVPCEnabled
     Properties:
       AvailabilityZone:
@@ -513,10 +543,10 @@ Resources:
       CidrBlock: {Ref: PublicSubnet01Block}
       Tags:
         - Key: Name
-          Value: 'ComprehendESPublicSubnet01'
-      VpcId: {Ref: ComprehendESVPC}
+          Value: 'ComprehendOpenSearchServicePublicSubnet01'
+      VpcId: {Ref: ComprehendOpenSearchServiceVPC}
     Type: AWS::EC2::Subnet
-  ComprehendESPublicSubnet02:
+  ComprehendOpenSearchServicePublicSubnet02:
     Condition: IsVPCEnabled
     Properties:
       AvailabilityZone:
@@ -526,10 +556,10 @@ Resources:
       CidrBlock: {Ref: PublicSubnet02Block}
       Tags:
         - Key: Name
-          Value: 'ComprehendESPublicSubnet02'
-      VpcId: {Ref: ComprehendESVPC}
+          Value: 'ComprehendOpenSearchServicePublicSubnet02'
+      VpcId: {Ref: ComprehendOpenSearchServiceVPC}
     Type: AWS::EC2::Subnet
-  ComprehendESPrivateSubnet01:
+  ComprehendOpenSearchServicePrivateSubnet01:
     Condition: IsVPCEnabled
     Properties:
       AvailabilityZone:
@@ -539,10 +569,10 @@ Resources:
       CidrBlock: {Ref: PrivateSubnet01Block}
       Tags:
         - Key: Name
-          Value: 'ComprehendESPrivateSubnet01'
-      VpcId: {Ref: ComprehendESVPC}
+          Value: 'ComprehendOpenSearchServicePrivateSubnet01'
+      VpcId: {Ref: ComprehendOpenSearchServiceVPC}
     Type: AWS::EC2::Subnet
-  ComprehendESPrivateSubnet02:
+  ComprehendOpenSearchServicePrivateSubnet02:
     Condition: IsVPCEnabled
     Properties:
       AvailabilityZone:
@@ -552,142 +582,142 @@ Resources:
       CidrBlock: {Ref: PrivateSubnet02Block}
       Tags:
         - Key: Name
-          Value: 'ComprehendESPrivateSubnet02'
-      VpcId: {Ref: ComprehendESVPC}
+          Value: 'ComprehendOpenSearchServicePrivateSubnet02'
+      VpcId: {Ref: ComprehendOpenSearchServiceVPC}
     Type: AWS::EC2::Subnet
   # Elastic IP
-  ComprehendESEIP01:
+  ComprehendOpenSearchServiceEIP01:
     Condition: IsVPCEnabled
     Properties:
       Domain: vpc
     Type: AWS::EC2::EIP
-  ComprehendESEIP02:
+  ComprehendOpenSearchServiceEIP02:
     Condition: IsVPCEnabled
     Properties:
       Domain: vpc
     Type: AWS::EC2::EIP
   # Gateway
-  ComprehendESInternetGateway:
+  ComprehendOpenSearchServiceInternetGateway:
     Condition: IsVPCEnabled
     Properties:
       Tags:
         - Key: Name
-          Value: 'ComprehendESInternetGateway'
+          Value: 'ComprehendOpenSearchServiceInternetGateway'
     Type: 'AWS::EC2::InternetGateway'
-  ComprehendESGatewayAttachement:
+  ComprehendOpenSearchServiceGatewayAttachement:
     Condition: IsVPCEnabled
     Properties:
-      InternetGatewayId: {Ref: ComprehendESInternetGateway}
-      VpcId: {Ref: ComprehendESVPC}
+      InternetGatewayId: {Ref: ComprehendOpenSearchServiceInternetGateway}
+      VpcId: {Ref: ComprehendOpenSearchServiceVPC}
     Type: AWS::EC2::VPCGatewayAttachment
-  ComprehendESNATFromPublicSubnet01:
+  ComprehendOpenSearchServiceNATFromPublicSubnet01:
     Condition: IsVPCEnabled
-    DependsOn: ComprehendESGatewayAttachement
+    DependsOn: ComprehendOpenSearchServiceGatewayAttachement
     Properties:
       AllocationId:
-        Fn::GetAtt: [ComprehendESEIP01, AllocationId]
-      SubnetId: {Ref: ComprehendESPublicSubnet01}
+        Fn::GetAtt: [ComprehendOpenSearchServiceEIP01, AllocationId]
+      SubnetId: {Ref: ComprehendOpenSearchServicePublicSubnet01}
       Tags:
         - Key: Name
-          Value: 'ComprehendESNATFromPublicSubnet01'
+          Value: 'ComprehendOpenSearchServiceNATFromPublicSubnet01'
     Type: AWS::EC2::NatGateway
-  ComprehendESNATFromPublicSubnet02:
+  ComprehendOpenSearchServiceNATFromPublicSubnet02:
     Condition: IsVPCEnabled
-    DependsOn: ComprehendESGatewayAttachement
+    DependsOn: ComprehendOpenSearchServiceGatewayAttachement
     Properties:
       AllocationId:
-        Fn::GetAtt: [ComprehendESEIP02, AllocationId]
-      SubnetId: {Ref: ComprehendESPublicSubnet02}
+        Fn::GetAtt: [ComprehendOpenSearchServiceEIP02, AllocationId]
+      SubnetId: {Ref: ComprehendOpenSearchServicePublicSubnet02}
       Tags:
         - Key: Name
-          Value: 'ComprehendESNATFromPublicSubnet02'
+          Value: 'ComprehendOpenSearchServiceNATFromPublicSubnet02'
     Type: AWS::EC2::NatGateway
   # RouteTable
-  ComprehendESPublicRouteTable:
+  ComprehendOpenSearchServicePublicRouteTable:
     Condition: IsVPCEnabled
     Properties:
       Tags:
         - Key: Name
-          Value: 'ComprehendESPublicRouteTable'
-      VpcId: {Ref: ComprehendESVPC}
+          Value: 'ComprehendOpenSearchServicePublicRouteTable'
+      VpcId: {Ref: ComprehendOpenSearchServiceVPC}
     Type: AWS::EC2::RouteTable
-  ComprehendESPrivateRouteTable01:
+  ComprehendOpenSearchServicePrivateRouteTable01:
     Condition: IsVPCEnabled
     Properties:
       Tags:
         - Key: Name
-          Value: 'ComprehendESPrivateRouteTable01'
-      VpcId: {Ref: ComprehendESVPC}
+          Value: 'ComprehendOpenSearchServicePrivateRouteTable01'
+      VpcId: {Ref: ComprehendOpenSearchServiceVPC}
     Type: AWS::EC2::RouteTable
-  ComprehendESPrivateRouteTable02:
+  ComprehendOpenSearchServicePrivateRouteTable02:
     Condition: IsVPCEnabled
     Properties:
       Tags:
         - Key: Name
-          Value: 'ComprehendESPrivateRouteTable02'
-      VpcId: {Ref: ComprehendESVPC}
+          Value: 'ComprehendOpenSearchServicePrivateRouteTable02'
+      VpcId: {Ref: ComprehendOpenSearchServiceVPC}
     Type: AWS::EC2::RouteTable
   # Route
-  ComprehendESPublicRouteTableIGWRoute:
+  ComprehendOpenSearchServicePublicRouteTableIGWRoute:
     Condition: IsVPCEnabled
-    DependsOn: ComprehendESGatewayAttachement
+    DependsOn: ComprehendOpenSearchServiceGatewayAttachement
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: {Ref: ComprehendESInternetGateway}
-      RouteTableId: {Ref: ComprehendESPublicRouteTable}
+      GatewayId: {Ref: ComprehendOpenSearchServiceInternetGateway}
+      RouteTableId: {Ref: ComprehendOpenSearchServicePublicRouteTable}
     Type: AWS::EC2::Route
-  ComprehendESPrivateNATInternetRoute01:
+  ComprehendOpenSearchServicePrivateNATInternetRoute01:
     Condition: IsVPCEnabled
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: {Ref: ComprehendESNATFromPublicSubnet01}
-      RouteTableId: {Ref: ComprehendESPrivateRouteTable01}
+      NatGatewayId: {Ref: ComprehendOpenSearchServiceNATFromPublicSubnet01}
+      RouteTableId: {Ref: ComprehendOpenSearchServicePrivateRouteTable01}
     Type: AWS::EC2::Route
-  ComprehendESPrivateNATInternetRoute02:
+  ComprehendOpenSearchServicePrivateNATInternetRoute02:
     Condition: IsVPCEnabled
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: {Ref: ComprehendESNATFromPublicSubnet02}
-      RouteTableId: {Ref: ComprehendESPrivateRouteTable02}
+      NatGatewayId: {Ref: ComprehendOpenSearchServiceNATFromPublicSubnet02}
+      RouteTableId: {Ref: ComprehendOpenSearchServicePrivateRouteTable02}
     Type: AWS::EC2::Route
   # RouteTable Association
-  ComprehendESPublicSubnetRouteTableAssociation01:
+  ComprehendOpenSearchServicePublicSubnetRouteTableAssociation01:
     Condition: IsVPCEnabled
     Metadata: {Comment: Associate subnet to Public route}
     Properties:
-      RouteTableId: {Ref: ComprehendESPublicRouteTable}
-      SubnetId: {Ref: ComprehendESPublicSubnet01}
+      RouteTableId: {Ref: ComprehendOpenSearchServicePublicRouteTable}
+      SubnetId: {Ref: ComprehendOpenSearchServicePublicSubnet01}
     Type: AWS::EC2::SubnetRouteTableAssociation
-  ComprehendESPublicSubnetRouteTableAssociation02:
+  ComprehendOpenSearchServicePublicSubnetRouteTableAssociation02:
     Condition: IsVPCEnabled
     Metadata: {Comment: Associate subnet to Public route}
     Properties:
-      RouteTableId: {Ref: ComprehendESPublicRouteTable}
-      SubnetId: {Ref: ComprehendESPublicSubnet02}
+      RouteTableId: {Ref: ComprehendOpenSearchServicePublicRouteTable}
+      SubnetId: {Ref: ComprehendOpenSearchServicePublicSubnet02}
     Type: AWS::EC2::SubnetRouteTableAssociation
-  ComprehendESPrivateSubnetRouteTableAssociation01:
+  ComprehendOpenSearchServicePrivateSubnetRouteTableAssociation01:
     Condition: IsVPCEnabled
     Metadata: {Comment: Associate subnet to private route}
     Properties:
-      RouteTableId: {Ref: ComprehendESPrivateRouteTable01}
-      SubnetId: {Ref: ComprehendESPrivateSubnet01}
+      RouteTableId: {Ref: ComprehendOpenSearchServicePrivateRouteTable01}
+      SubnetId: {Ref: ComprehendOpenSearchServicePrivateSubnet01}
     Type: AWS::EC2::SubnetRouteTableAssociation
-  ComprehendESPrivateSubnetRouteTableAssociation02:
+  ComprehendOpenSearchServicePrivateSubnetRouteTableAssociation02:
     Condition: IsVPCEnabled
     Metadata: {Comment: Associate subnet to private route}
     Properties:
-      RouteTableId: {Ref: ComprehendESPrivateRouteTable02}
-      SubnetId: {Ref: ComprehendESPrivateSubnet02}
+      RouteTableId: {Ref: ComprehendOpenSearchServicePrivateRouteTable02}
+      SubnetId: {Ref: ComprehendOpenSearchServicePrivateSubnet02}
     Type: AWS::EC2::SubnetRouteTableAssociation
   # Security Group
-  ComprehendESSecurityGroup:
+  ComprehendOpenSearchServiceSecurityGroup:
     Condition: IsVPCEnabled
     Properties:
       GroupDescription: Allow HTTPs inbound traffic and all outbound access
       Tags:
         - Key: Name
-          Value: 'ComprehendESSecurityGroup'
-      VpcId: {Ref: ComprehendESVPC}
+          Value: 'ComprehendOpenSearchServiceSecurityGroup'
+      VpcId: {Ref: ComprehendOpenSearchServiceVPC}
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 443
@@ -713,7 +743,7 @@ Resources:
       Tags:
         - Key: Name
           Value: 'ProxyServiceSecurityGroup'
-      VpcId: {Ref: ComprehendESVPC}
+      VpcId: {Ref: ComprehendOpenSearchServiceVPC}
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 443

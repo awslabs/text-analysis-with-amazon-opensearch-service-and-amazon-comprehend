@@ -1,6 +1,19 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License").
+// You may not use this file except in compliance with the License.
+// A copy of the License is located at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// or in the "license" file accompanying this file. This file is distributed
+// on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the License for the specific language governing
+// permissions and limitations under the License.
+
 package com.amazonaws.comprehend.esproxy.lambda.processor;
 
-import com.amazonaws.comprehend.esproxy.lambda.client.ElasticsearchClient;
+import com.amazonaws.comprehend.esproxy.lambda.client.OpenSearchServiceClient;
 import com.amazonaws.comprehend.esproxy.lambda.model.ComprehendConfiguration;
 import com.amazonaws.comprehend.esproxy.lambda.model.PreprocessingConfigRequest;
 import com.amazonaws.comprehend.esproxy.lambda.utils.ConfigRetriever;
@@ -21,15 +34,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Processor to process Comprehend Elasticsearch Preprocessing Configuration requests
+ * Processor to process Comprehend OpenSearch Service Preprocessing Configuration requests
  */
 @AllArgsConstructor
-public class PreprocessingConfigProcessor implements ElasticsearchProcessor {
+public class PreprocessingConfigProcessor implements OpenSearchServiceProcessor {
     @NonNull
     private final ComprehendSerializer<PreprocessingConfigRequest> configSerializer;
 
     @NonNull
-    private final ElasticsearchClient esClient;
+    private final OpenSearchServiceClient esClient;
 
     @NonNull
     private final ConfigRetriever configRetriever;
@@ -38,11 +51,11 @@ public class PreprocessingConfigProcessor implements ElasticsearchProcessor {
     private final KibanaUploader kibanaUploader;
 
     /**
-     * Process Comprehend Elasticsearch Preprocessing Configuration requests
+     * Process Comprehend OpenSearch Service Preprocessing Configuration requests
      *
-     * @param request The received Elasticsearch client request
+     * @param request The received OpenSearch Service client request
      * @param logger  The LambdaLogger to output logs from the function code
-     * @return Elasticsearch service response
+     * @return OpenSearch Service service response
      */
     @Override
     public Response processRequest(@NonNull final Request request, @NonNull final LambdaLogger logger) {

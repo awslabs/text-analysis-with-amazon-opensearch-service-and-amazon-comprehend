@@ -1,6 +1,6 @@
 package com.amazonaws.comprehend.esproxy.lambda.utils;
 
-import com.amazonaws.comprehend.esproxy.lambda.client.ElasticsearchClient;
+import com.amazonaws.comprehend.esproxy.lambda.client.OpenSearchServiceClient;
 import com.amazonaws.comprehend.esproxy.lambda.exception.InternalErrorException;
 import com.amazonaws.comprehend.esproxy.lambda.exception.InvalidRequestException;
 import com.amazonaws.comprehend.esproxy.lambda.model.ComprehendConfiguration;
@@ -33,7 +33,7 @@ public class ConfigRetrieverTest {
     private ComprehendSerializer<PreprocessingConfigRequest> mockConfigSerializer;
 
     @Mock
-    private ElasticsearchClient mockESClient;
+    private OpenSearchServiceClient mockESClient;
 
     @Mock
     private Response mockESResponse;
@@ -76,7 +76,7 @@ public class ConfigRetrieverTest {
 
     @Test(expected = InternalErrorException.class)
     public void failedToPerformRequest() {
-        ElasticsearchClient mockBadESClient = mock(ElasticsearchClient.class);
+        OpenSearchServiceClient mockBadESClient = mock(OpenSearchServiceClient.class);
         when(mockBadESClient.performRequest(anyString(), anyString())).thenThrow(new InternalErrorException(""));
 
         test = new ConfigRetriever(mockConfigSerializer, mockBadESClient);

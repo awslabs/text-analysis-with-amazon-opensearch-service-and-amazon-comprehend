@@ -1,6 +1,6 @@
 package com.amazonaws.comprehend.esproxy.lambda.processor;
 
-import com.amazonaws.comprehend.esproxy.lambda.client.ElasticsearchClient;
+import com.amazonaws.comprehend.esproxy.lambda.client.OpenSearchServiceClient;
 import com.amazonaws.comprehend.esproxy.lambda.exception.InternalErrorException;
 import com.amazonaws.comprehend.esproxy.lambda.exception.InvalidRequestException;
 import com.amazonaws.comprehend.esproxy.lambda.model.PreprocessingConfigRequest;
@@ -43,7 +43,7 @@ public class PreprocessingConfigProcessorTest {
     private ComprehendSerializer<PreprocessingConfigRequest> mockConfigSerializer;
 
     @Mock
-    private ElasticsearchClient mockESClient;
+    private OpenSearchServiceClient mockESClient;
 
     @Mock
     private ConfigRetriever mockConfigRetriever;
@@ -136,7 +136,7 @@ public class PreprocessingConfigProcessorTest {
 
     @Test(expected = InternalErrorException.class)
     public void failWhenConfigSaveFailed() {
-        ElasticsearchClient mockBadClient = mock(ElasticsearchClient.class);
+        OpenSearchServiceClient mockBadClient = mock(OpenSearchServiceClient.class);
         when(mockBadClient.performRequest(anyString(), anyString(), anyString())).thenThrow(InternalErrorException.class);
         test = new PreprocessingConfigProcessor(mockConfigSerializer, mockBadClient, mockConfigRetriever, mockKibanaUploader);
 

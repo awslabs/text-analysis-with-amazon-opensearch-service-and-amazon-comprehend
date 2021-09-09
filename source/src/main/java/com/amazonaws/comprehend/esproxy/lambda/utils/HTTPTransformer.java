@@ -1,3 +1,16 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License").
+// You may not use this file except in compliance with the License.
+// A copy of the License is located at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// or in the "license" file accompanying this file. This file is distributed
+// on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the License for the specific language governing
+// permissions and limitations under the License.
+
 package com.amazonaws.comprehend.esproxy.lambda.utils;
 
 import com.amazonaws.comprehend.esproxy.lambda.exception.CustomerMessage;
@@ -14,12 +27,12 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Transformer to transform HTTP between API Gateway Request and Elasticsearch Request
+ * Transformer to transform HTTP between API Gateway Request and OpenSearchService Request
  * HttpEntity to String
  */
 public class HTTPTransformer {
 
-    // Transform API Gateway request to Elasticsearch request
+    // Transform API Gateway request to OpenSearchService request
     public static Request apiGatewayRequestToESRequest(@NonNull final APIGatewayProxyRequestEvent requestEvent) {
         final Request esRequest = new Request(requestEvent.getHttpMethod(), requestEvent.getPath());
         Map<String,String> queryStringParams = requestEvent.getQueryStringParameters();
@@ -29,7 +42,7 @@ public class HTTPTransformer {
         return esRequest;
     }
 
-    // Transform Elasticsearch response to API Gateway response
+    // Transform OpenSearchService response to API Gateway response
     public static APIGatewayProxyResponseEvent esResponseToAPIGatewayResponse(@NonNull final Response esResponse)
             throws InternalErrorException {
         int statusCode = esResponse.getStatusLine().getStatusCode();

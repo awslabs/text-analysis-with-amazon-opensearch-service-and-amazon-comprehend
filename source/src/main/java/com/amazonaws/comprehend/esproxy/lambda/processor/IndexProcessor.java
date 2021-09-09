@@ -1,6 +1,19 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License").
+// You may not use this file except in compliance with the License.
+// A copy of the License is located at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// or in the "license" file accompanying this file. This file is distributed
+// on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the License for the specific language governing
+// permissions and limitations under the License.
+
 package com.amazonaws.comprehend.esproxy.lambda.processor;
 
-import com.amazonaws.comprehend.esproxy.lambda.client.ElasticsearchClient;
+import com.amazonaws.comprehend.esproxy.lambda.client.OpenSearchServiceClient;
 import com.amazonaws.comprehend.esproxy.lambda.exception.CustomerMessage;
 import com.amazonaws.comprehend.esproxy.lambda.exception.InternalErrorException;
 import com.amazonaws.comprehend.esproxy.lambda.model.ComprehendConfiguration;
@@ -33,10 +46,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Processor to process Comprehend Elasticsearch Index requests
+ * Processor to process Comprehend OpenSearchService Index requests
  */
 @RequiredArgsConstructor
-public class IndexProcessor implements ElasticsearchProcessor {
+public class IndexProcessor implements OpenSearchServiceProcessor {
 
     public final static String SDK_RESPONSE_METADATA_KEY = "sdkResponseMetadata";
 
@@ -49,7 +62,7 @@ public class IndexProcessor implements ElasticsearchProcessor {
     private final AmazonComprehend comprehendClient;
 
     @NonNull
-    private final ElasticsearchClient esClient;
+    private final OpenSearchServiceClient esClient;
 
     @NonNull
     private final ConfigRetriever configRetriever;
@@ -58,11 +71,11 @@ public class IndexProcessor implements ElasticsearchProcessor {
     private final ExecutorService executorService;
 
     /**
-     * Process Comprehend Elasticsearch proxy Index requests
+     * Process Comprehend OpenSearchService proxy Index requests
      *
-     * @param request The received Elasticsearch client request
+     * @param request The received OpenSearchService client request
      * @param logger  The LambdaLogger to output logs from the function code
-     * @return Elasticsearch service response
+     * @return OpenSearchService service response
      */
     @Override
     public Response processRequest(@NonNull final Request request, @NonNull final LambdaLogger logger) {
@@ -112,7 +125,7 @@ public class IndexProcessor implements ElasticsearchProcessor {
             payloadJson.put(Constants.TIME_STAMP_KEY, Instant.now().toString());
 
             // Send the enriched request to ES
-            logger.log("Ingest Comprehend enriched results to Elasticsearch");
+            logger.log("Ingest Comprehend enriched results to OpenSearchService");
             return esClient.performRequest(request.getMethod(), request.getEndpoint(), payloadJson.toString());
         } catch (Exception e) {
             logger.log("Exceptions happen when trying to process index request. " + e);

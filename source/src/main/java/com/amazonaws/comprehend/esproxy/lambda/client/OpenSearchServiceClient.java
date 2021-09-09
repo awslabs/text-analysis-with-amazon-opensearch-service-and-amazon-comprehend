@@ -1,3 +1,16 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License").
+// You may not use this file except in compliance with the License.
+// A copy of the License is located at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// or in the "license" file accompanying this file. This file is distributed
+// on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the License for the specific language governing
+// permissions and limitations under the License.
+
 package com.amazonaws.comprehend.esproxy.lambda.client;
 
 import com.amazonaws.comprehend.esproxy.lambda.exception.CustomerMessage;
@@ -14,17 +27,17 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Elasticsearch Rest Client Wrapper class
+ * OpenSearch Service Rest Client Wrapper class
  */
 @RequiredArgsConstructor
-public class ElasticsearchClient {
+public class OpenSearchServiceClient {
     private final RestClient restClient;
 
     /**
-     * Perform elasticsearch request
+     * Perform OpenSearch Service request
      *
-     * @param request Received Elasticsearch request
-     * @return Elasticsearch service response
+     * @param request Received OpenSearch Service request
+     * @return OpenSearch Service service response
      */
     public Response performRequest(@NonNull Request request) {
         try {
@@ -37,11 +50,11 @@ public class ElasticsearchClient {
     }
 
     /**
-     * Perform elasticsearch request with received request and new endpoint
+     * Perform OpenSearch Service request with received request and new endpoint
      *
-     * @param request  Received Elasticsearch request
-     * @param endpoint New Elasticsearch Domain Endpoint
-     * @return Elasticsearch service response
+     * @param request  Received OpenSearch Service request
+     * @param endpoint New OpenSearch Service Domain Endpoint
+     * @return OpenSearch Service service response
      */
     public Response performRequest(@NonNull Request request, @NonNull String endpoint) {
         Request newRequest = new Request(request.getMethod(), endpoint);
@@ -50,11 +63,11 @@ public class ElasticsearchClient {
     }
 
     /**
-     * Perform elasticsearch request with given method and endpoint (with no payload)
+     * Perform OpenSearch Service request with given method and endpoint (with no payload)
      *
      * @param method   Request method
-     * @param endpoint Elasticsearch Domain Endpoint
-     * @return Elasticsearch service response
+     * @param endpoint OpenSearch Service Domain Endpoint
+     * @return OpenSearch Service service response
      */
     public Response performRequest(@NonNull String method, @NonNull String endpoint) {
         Request request = new Request(method, endpoint);
@@ -62,12 +75,12 @@ public class ElasticsearchClient {
     }
 
     /**
-     * Perform elasticsearch request with given method, endpoint and payload
+     * Perform OpenSearch Service request with given method, endpoint and payload
      *
      * @param method   Request method
-     * @param endpoint Elasticsearch Domain Endpoint
+     * @param endpoint OpenSearch Service Domain Endpoint
      * @param payload  The new payload for the request
-     * @return Elasticsearch service response
+     * @return OpenSearch Service service response
      */
     public Response performRequest(@NonNull String method, @NonNull String endpoint, @NonNull String payload) {
         Request request = new Request(method, endpoint);
@@ -76,13 +89,13 @@ public class ElasticsearchClient {
     }
 
     /**
-     * Perform elasticsearch request with given method, endpoint, payload and new headers
+     * Perform OpenSearch Service request with given method, endpoint, payload and new headers
      *
      * @param method    Request method
-     * @param endpoint  Elasticsearch Domain Endpoint
+     * @param endpoint  OpenSearch Service Domain Endpoint
      * @param payload   The new payload for the request
      * @param headerMap The map for the request headers
-     * @return Elasticsearch service response
+     * @return OpenSearch Service service response
      */
     public Response performRequest(@NonNull String method, @NonNull String endpoint, @NonNull String payload,
                                    @NonNull Map<String, String> headerMap) {

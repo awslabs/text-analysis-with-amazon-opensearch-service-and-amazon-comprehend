@@ -1,9 +1,22 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License").
+// You may not use this file except in compliance with the License.
+// A copy of the License is located at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// or in the "license" file accompanying this file. This file is distributed
+// on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the License for the specific language governing
+// permissions and limitations under the License.
+
 package com.amazonaws.comprehend.esproxy.lambda;
 
 import com.amazonaws.comprehend.esproxy.lambda.exception.InvalidRequestException;
 import com.amazonaws.comprehend.esproxy.lambda.modules.ModuleConstants;
 import com.amazonaws.comprehend.esproxy.lambda.modules.RequestHandlerModule;
-import com.amazonaws.comprehend.esproxy.lambda.processor.ElasticsearchProcessor;
+import com.amazonaws.comprehend.esproxy.lambda.processor.OpenSearchServiceProcessor;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -27,26 +40,26 @@ import java.util.Arrays;
 /**
  * Handler to handle the APIGateway proxy request
  */
-public class ElasticsearchProxyRequestHandler
+public class OpenSearchServiceProxyRequestHandler
         implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
     private static final Injector INJECTOR = Guice.createInjector(new RequestHandlerModule());
     @Inject
     @Named(ModuleConstants.PREPROCESSING_CONFIG_PROCESSOR)
-    private ElasticsearchProcessor configProcessor;
+    private OpenSearchServiceProcessor configProcessor;
 
     @Inject
     @Named(ModuleConstants.INDEX_PROCESSOR)
-    private ElasticsearchProcessor indexProcessor;
+    private OpenSearchServiceProcessor indexProcessor;
 
     @Inject
     @Named(ModuleConstants.BULK_PROCESSOR)
-    private ElasticsearchProcessor bulkProcessor;
+    private OpenSearchServiceProcessor bulkProcessor;
 
     @Inject
     @Named(ModuleConstants.DEFAULT_PROCESSOR)
-    private ElasticsearchProcessor end2endProcessor;
+    private OpenSearchServiceProcessor end2endProcessor;
 
-    public ElasticsearchProxyRequestHandler() {
+    public OpenSearchServiceProxyRequestHandler() {
         INJECTOR.injectMembers(this);
     }
 
@@ -63,10 +76,10 @@ public class ElasticsearchProxyRequestHandler
         logger.log("Received API Gateway request event");
 
         try {
-            // Transform API Gateway request to Elasticsearch request
+            // Transform API Gateway request to OpenSearch Service request
             Request esRequest = HTTPTransformer.apiGatewayRequestToESRequest(requestEvent);
-            ElasticsearchProcessor elasticsearchProcessor = getProcessor(esRequest);
-            Response esConfigResponse = elasticsearchProcessor.processRequest(esRequest, logger);
+            OpenSearchServiceProcessor openSearchServiceProcessor = getProcessor(esRequest);
+            Response esConfigResponse = openSearchServiceProcessor.processRequest(esRequest, logger);
             return HTTPTransformer.esResponseToAPIGatewayResponse(esConfigResponse);
 
         } catch (InvalidRequestException e) {
@@ -84,7 +97,7 @@ public class ElasticsearchProxyRequestHandler
         }
     }
 
-    private ElasticsearchProcessor getProcessor(@NonNull final Request esRequest) {
+    private OpenSearchServiceProcessor getProcessor(@NonNull final Request esRequest) {
         if (RequestIdentifier.isConfigRequest(esRequest)) {
             return configProcessor;
         }
@@ -100,7 +113,7 @@ public class ElasticsearchProxyRequestHandler
     }
 
     @VisibleForTesting
-    ElasticsearchProxyRequestHandler(Injector testInjector) {
+    OpenSearchServiceProxyRequestHandler(Injector testInjector) {
         testInjector.injectMembers(this);
     }
 }
