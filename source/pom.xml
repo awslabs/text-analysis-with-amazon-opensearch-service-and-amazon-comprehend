@@ -9,7 +9,7 @@
 
     <packaging>jar</packaging>
     <properties>
-        <elasticsearch.version>6.7.1</elasticsearch.version>
+        <elasticsearch.version>6.8.15</elasticsearch.version>
         <awsclient.version>1.11.569</awsclient.version> <!-- Use same version for all required individual AWS service Client-->
     </properties>
 
